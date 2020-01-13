@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+  <head>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Real-Time Feedback from Tensorflow Generative Model | Research @ 360</title>
+  <meta name="description" content="This article tells my research that took off after reading some recent research papers on Plug &amp; Play Generative models.
+Generative Deep Network Models can be powerful: they are trained to take a (small) sequence of data in input and to predict what the next element of the sequence should be.
+The most famous applications of such models are in Natural Language Processing (NLP). When given a sequence of words, Generative Networks can predict the next word.">
+  <meta name="author" content="Pietro"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Research @ 360",
+    
+    "url": "https:\/\/pgrandinetti.github.io\/research"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "https:\/\/pgrandinetti.github.io\/research"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/pgrandinetti.github.io\/research",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/pgrandinetti.github.io\/research\/2020\/01\/real-time-feedback-from-tensorflow-generative-model\/",
+          "name": "Real time feedback from tensorflow generative model"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "Pietro"
+  },
+  "headline": "Real-Time Feedback from Tensorflow Generative Model",
+  "description" : "This article tells my research that took off after reading some recent research papers on Plug \x26amp; Play Generative models.\nGenerative Deep Network Models can be powerful: they are trained to take a (small) sequence of data in input and to predict what the next element of the sequence should be.\nThe most famous applications of such models are in Natural Language Processing (NLP). When given a sequence of words, Generative Networks can predict the next word.",
+  "inLanguage" : "en",
+  "wordCount":  4053 ,
+  "datePublished" : "2020-01-12T00:00:00",
+  "dateModified" : "2020-01-12T00:00:00",
+  "image" : "https:\/\/pgrandinetti.github.io\/research",
+  "keywords" : [ "" ],
+  "mainEntityOfPage" : "https:\/\/pgrandinetti.github.io\/research\/2020\/01\/real-time-feedback-from-tensorflow-generative-model\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/pgrandinetti.github.io\/research",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/pgrandinetti.github.io\/research",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+<meta property="og:title" content="Real-Time Feedback from Tensorflow Generative Model" />
+<meta property="og:description" content="This article tells my research that took off after reading some recent research papers on Plug &amp; Play Generative models.
+Generative Deep Network Models can be powerful: they are trained to take a (small) sequence of data in input and to predict what the next element of the sequence should be.
+The most famous applications of such models are in Natural Language Processing (NLP). When given a sequence of words, Generative Networks can predict the next word.">
+<meta property="og:url" content="https://pgrandinetti.github.io/research/2020/01/real-time-feedback-from-tensorflow-generative-model/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Research @ 360" />
+
+  <meta name="twitter:title" content="Real-Time Feedback from Tensorflow Generative Model" />
+  <meta name="twitter:description" content="This article tells my research that took off after reading some recent research papers on Plug &amp; Play Generative models.
+Generative Deep Network Models can be powerful: they are trained to take a …">
+  <meta name="twitter:card" content="summary" />
+  <meta name="generator" content="Hugo 0.58.3" />
+  <link rel="alternate" href="https://pgrandinetti.github.io/research/index.xml" type="application/rss+xml" title="Research @ 360">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"><link rel="stylesheet" href="https://pgrandinetti.github.io/research/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://pgrandinetti.github.io/research/css/syntax.css" /><link rel="stylesheet" href="https://pgrandinetti.github.io/research/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://pgrandinetti.github.io/research">Research @ 360</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="About" href="https://pgrandinetti.github.io">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Open-Source" href="https://github.com/pgrandinetti/research">Open-Source</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              
+                <h1>Real-Time Feedback from Tensorflow Generative Model</h1>
+              
+              
+              
+              
+                
+                
+                  <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;Posted on January 12, 2020
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;20&nbsp;minutes
+  
+  
+  
+  
+</span>
+
+
+                
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        
+
+<p>This article tells my research that took off after reading some recent research papers on Plug &amp; Play Generative models.</p>
+
+<p>Generative Deep Network Models can be powerful: they are trained to take a (small) sequence of data in input and to predict what the next element of the sequence should be.</p>
+
+<p>The most famous applications of such models are in Natural Language Processing (NLP). When given a sequence of words, Generative Networks can predict the next word. The end result is the generation of a whole text. The fantastic part of the story is that, in recent years, researchers at Google, OpenAI, Uber, have built models (BERT, GPT-2) with incredible generative skills. The text they generate is getting closer and closer to a human-generated text!</p>
+
+<p>In this exciting field, Plug &amp; Play models are really interesting and appealing. Be sure to check the experimental section at the end of this article.</p>
+
+<h2 id="plug-play-generative-models">Plug &amp; Play Generative Models</h2>
+
+<p>The fascinating point of Plug &amp; Play Models (PPM) is that they answer a very basic question:</p>
+
+<blockquote>
+<p>In a generative model, can we improve the generation online, that is, while it is undergoing?</p>
+</blockquote>
+
+<p>Let&rsquo;s first think about the classic generative models scheme, and then compare it to PPM. In a &ldquo;normal&rdquo; generative model:</p>
+
+<ol>
+<li>The model is trained once, on a huge dataset. Validation and test are also done, of course. Training happens &ldquo;offline&rdquo;, that is, before the actual generation begins.</li>
+<li>In a real application, the trained model is used by feeding the beginning of a sequence (e.g., a sentence) and getting the predicted next sequence element (e.g., the predicted next word).</li>
+<li>Step 2 is repeated in loop. The predicted element is appended to the sequence. The augmented sequence is given as input to the model and a new predicted element is returned by the model.</li>
+<li>At the end of the generation loop, a long sequence has been generated by the model. Furthermore, the model was not modified during the generation.</li>
+</ol>
+
+<p><img alt="Generative loop without real-time feedback" src="../../../img/realtimeGenerativeFeedback/image15.png" width="650px" /></p>
+
+<p>In the figure above, the generation loop is at the center of the diagram. At each time step, the newly generated element (current output of the network) is appended to the final sequence, and is also used as part of the input to generate the next element.</p>
+
+<p>Let&rsquo;s look more into the details.</p>
+
+<p>Initially, the first 3 elements of the sequence are given: $x(0)$, $x(1)$, $x(2)$. Using them, the network predicts a new element, say $x(3)$.</p>
+
+<p>Thus, $x(3)$ will be part of the final sequence (so far composed of $x(0)$, $x(1)$, $x(2)$, $x(3)$), and will also be part of the new input.</p>
+
+<p>Since most deep networks have a fixed size for the input, in this example 3, a &ldquo;shifting-window&rdquo; operation is needed, and at the next step the input will be prepared as $x(1)$, $x(2)$, $x(3)$, and the new element will be $x(4)$. Note that $x(0)$ isn&rsquo;t part of the input anymore.</p>
+
+<p>This process is repeated a number of times based on the desired length of the final sequence. The key point in the context of this article is that the network model is not modified during generation.</p>
+
+<p>What would happen if we modified the model <em>online</em>? Again, &ldquo;online&rdquo; means during generation.</p>
+
+<p><img alt="Generative loop with real-time feedback" src="../../../img/realtimeGenerativeFeedback/image13.png" width="650px" /></p>
+
+<p>In this scenario, the last element generated by the network is used in three ways:</p>
+
+<ol>
+<li>As part of the input to generate the next element, like in the previous case.</li>
+<li>As part of the final sequence, again like in the previous case.</li>
+<li>As a variable to compute an &ldquo;action&rdquo; that changes the model itself. This is totally in contrast with the first approach (and with the whole deep learning theory, I&rsquo;d argue).</li>
+</ol>
+
+<p>The goal of the &ldquo;action&rdquo; computed online is effectively to steer the model towards different directions, more promising for the generative task at hand. This is, by all means, an example of <em>control of a dynamic system</em>.</p>
+
+<h2 id="control-of-dynamic-systems">Control of Dynamic Systems</h2>
+
+<p>Control Engineering is a much older discipline than Deep Learning. It&rsquo;s a very mathy subject, much mathy-ier than Machine Learning: it&rsquo;s basically all about convergence of differential equations.</p>
+
+<p>In fact, funnily enough, Control Systems Engineering was my M.Sc. subject, hence my disbelief when I saw the Plug &amp; Play papers published.</p>
+
+<p><img alt="Classic view of a controlled dynamic system" src="../../../img/realtimeGenerativeFeedback/image16.png" width="400px" /></p>
+
+<p>In Control Systems, at each time step:</p>
+
+<ul>
+<li>A system, or plant, has an external, uncontrollable input $u(t)$.</li>
+<li>The system evolves based on its current internal state $x(t)$ and on the input, and moves into a new state $x(t+1)$.</li>
+<li>Analysis of the internal dynamics (in stationary control), or predictions about the future states (in predictive control), allow to design a Controller system. The goal of the Controller is to generate a new input $v(t)$ for the system, based on the current state $x(t)$. This is called the controllable input.</li>
+</ul>
+
+<p>Overall, the objective of Control Engineering is to move the system into a desired state $x(t)$.</p>
+
+<p>The science of control systems is truly ubiquitous. It goes under other names too, such as Automation Engineering, or Mechatronics Engineering. Very, very famous application of it are:</p>
+
+<ul>
+<li>Cruise control.</li>
+<li>ABS (vehicles&rsquo; braking system).</li>
+<li>Automatic pilots (trains, airplanes, cars, trucks).</li>
+</ul>
+
+<p>Even the refrigerator and the washing machine in your house work thanks to some (basic) control system theory.</p>
+
+<p>I am sure you have already understood how close is the standard Control Systems framework to the Plug and Play Generative Networks idea.</p>
+
+<h2 id="a-word-of-caution">A word of caution</h2>
+
+<p>Purists of control theory (a group I consider myself part of, partially) are already screaming as they see where this article is going, I bet.</p>
+
+<blockquote>
+<p>The network will be so utterly unstable!!</p>
+</blockquote>
+
+<p>Stability is a very important concept in control theory. Your refrigerator must operate as to reach a stable temperature point, stay there for a little while, and then actionate its cooling engine only when the temperature drops a bit, to bring it back to the stable point.</p>
+
+<p>If the cooling engine was always on, or if it was turning on and off at high frequency, it would break soon. This is an example of an unstable system.</p>
+
+<p>Instability can be very dangerous. If you are building an automatic airplane pilot, and to get up to some altitude you fire the engine too hard and they break, you might kill people. In general, mechanical systems need stability to operate safely.</p>
+
+<p>Luckily for us, neural network do not make any assumption of stability when they are used. There is however a concept of stability in the optimization procedure (e.g., gradient descent), which is supposed to converge to a local minimum. In truth that doesn&rsquo;t always happen. If you train for too few epochs, or if the dataset is really, really not-convex, then maybe your gradient descent never converges.</p>
+
+<p>Bearing that in mind, my word of caution is the following. <strong>If you modify a generative model online you might break the optimization procedure that was done during offline training, and get quite far from the optimum point found during training.</strong></p>
+
+<p>The real question is: do we care at all?</p>
+
+<p>After all, practical deep networks are all about accuracy evaluation on a test set. Even researchers are mostly concerned with showing evaluation of their models on public datasets and compare those results with state of the art models. That&rsquo;s it.</p>
+
+<p>Nonetheless, I think the remark on stability is something very important to keep in mind, because it may actually be very important for some specific application.</p>
+
+<h2 id="benefits-of-plug-and-play-models">Benefits of Plug and Play models</h2>
+
+<p>The first benefit I see with PPMs is that they are <strong>computationally cheap</strong>.</p>
+
+<p>The idea is to take one of the largest models available off the shelf and steer it online. Obviously this is much cheaper than training your own model, which would require massive power and a lot of money (estimates for the most famous models are $60,000!!).</p>
+
+<p>Additionally, PPMs are much cheaper than standard fine-tuning procedures.</p>
+
+<p>When you fine-tune a large model, you still have to run some expensive, and time consuming, optimization on a few of the final layers of the large model. Large GPUs and a good wallet are needed.</p>
+
+<p>On the other hand, PPMs are cheap because:</p>
+
+<ul>
+<li>We load the original, large model as-it-is. And we use its generative power. In other words, we just call <code>model.predict(inputs)</code>.</li>
+<li>We design a much, much smaller system, that will be the steering model (aka, controller). This can even be a simple algebraic (or differential) formula, in which case it would be very, very efficient.</li>
+<li>We steer the larger model by using the smaller one. There are a few options about how to do this. For example, we could change the weights on some layer, or change the activations. I&rsquo;ll discuss a practical example in the next sections.</li>
+</ul>
+
+<p>There&rsquo;s no re-training to do, unless your steering model is also a deep network (but keep it cheap!). There&rsquo;s no expensive data collection to do. There&rsquo;s no crazy-expensive GPU to be paid.</p>
+
+<h2 id="experiments">Experiments</h2>
+
+<p>I really wanted to complement this article with an example of how to use the PPM idea, but I also wanted to keep it as simple as possible.</p>
+
+<p>If you take a paper that uses a PPM with good results on a complex problem, for instance text generation, the complexity of the task will bury down the essence of PPM and how it works.</p>
+
+<p>Thus, I designed a simple experiment where important concepts would really stand out and where reading and understanding the code is very simple. On the other hand, the scenario might seem overly simplified and a bit unrealistic, please bear with it if that&rsquo;s your impression.</p>
+
+<p>As additional resources, I released the code for these experiments <a href="https://github.com/pgrandinetti/research/blob/master/RealTimeFeedbackFromTensorflowGenerativeModel.ipynb">on GitHub</a> and in a <a href="https://colab.research.google.com/drive/1rpdtNQsy4VUWgCypMdsOgneHH1KQzlSM">notebook</a>.</p>
+
+<p>Let&rsquo;s get started. Do you remember the sinusoidal wave? It&rsquo;s used all over the place in digital sound (as well as mathematics, of course). Its shape is characterized by the frequency (number of high-peaks in each second) and amplitude (intensity of such peaks).</p>
+
+<p>Here&rsquo;s a sine wave with 2 cycles per second (frequency) and amplitude equals to 1, sampled for 10 seconds with 100 samples per second.</p>
+
+<p><img alt="Sine wave" src="../../../img/realtimeGenerativeFeedback/image18.png" width="400px" /></p>
+
+<p>The figure above shows a &ldquo;real&rdquo; sinusoidal. I generated it explicitly by writing code that computes $sin(t)$ at each sampled step $t$. In fact, I used <code>numpy</code> for this task.</p>
+
+<p>Let&rsquo;s assume that we want to generate a sinusoidal wave with a deep network. That might sound really too simple, but actually it&rsquo;s not. The sine wave is a transcendental function, which means to generate it cannot express in terms of a finite sequence of algebraic operations (addition, multiplication, and root extraction). That said, to generate a sampled sine is a very doable task.</p>
+
+<p>In particular, let&rsquo;s say we want a model that takes 10 samples from a $sin(t)$ and it predicts the next element.</p>
+
+<p>How does it work?</p>
+
+<ol>
+<li>Take the real wave. Remember we have 1000 time steps in that, for $t=0, \dots ,999$.</li>
+<li>Build windows of length 11, in a moving fashion from t=0 until the end. For example, the first window is for $t=0, \dots,10$. The second is for $t=1, \dots ,11$. The third for $t=2, \dots ,12$, and so on.</li>
+<li>Each of this window will be further divided into two parts. The first 10 elements will be the training sample and then 11th (and last) will be the expected result, the one the model has to learn from, via backpropagation.</li>
+</ol>
+
+<p>As this is a sequence task, you might want to use a sequence model, like RNN and such. However, I used a very simple densely connected model. With this simpler model I can show more effectively where the steering action is applied.</p>
+
+<p>To test this model, let&rsquo;s assume for a moment that we don&rsquo;t know the real wave anymore. We only know the first 10 elements of it.</p>
+
+<p>Feed these 10 elements into the trained model, with <code>model.predict(inputs)</code> or just <code>model(inputs)</code> in tensorflow 2.</p>
+
+<p>The model will give you the predicted 11th element. Append that to the first 10 you already had, take the last 10 in the new sequence (hence, from the 2nd to the 11th) and call again the model on them. You&rsquo;ll get the 12th (predicted) element. Repeat this until you have a whole new sequence of 1000 elements.</p>
+
+<p>Now you can compare the predicted sequence with the real one.</p>
+
+<p><img alt="Generated wave without feedback" src="../../../img/realtimeGenerativeFeedback/image17.png" width="400px" /></p>
+
+<p>The generated wave is somehow off. It&rsquo;s not too bad, but it seems as if the model gets confused periodically and has a bias, and loses one cycle every 5 seconds. The reason is probably that the simple model can&rsquo;t approximate well enough a transcendental function like $sin(t)$. More specifically, some oscillation in the wave leads the model to generate elements that are just very slightly off, but when they accumulate, the error grows.</p>
+
+<p>Now we could throw in a few deeper layers, with hundreds of units, train again and for a longer time (as the model is more complex) and see what happens.</p>
+
+<p>Let&rsquo;s try PPMs instead!</p>
+
+<p>Every time we call <code>model(inputs)</code>, we append the result to the current sequence, that will also be part of the inputs for the next generation. This is exactly like before.</p>
+
+<p>In addition to that, this time we will also compute a steering action using a super efficient steering model and apply it to the original model.</p>
+
+<p>How does that work exactly?</p>
+
+<ol>
+<li>The steering model uses simple differential equations. It computes the gradients of the loss of the currently predicted value against the real value.</li>
+<li>The gradient is computed only with respect to the weights of the last layer of the network.</li>
+<li>The gradient of the loss is then applied onto the same layer&rsquo;s weights in a gradient-descent fashion: with a learning step alpha of 0.05 that worked well in practice and with a normalization term equal to its euclidean norm.</li>
+</ol>
+
+<p>These are a lot of details, and the next section will elaborate them in details. But first, let&rsquo;s look at the resulting wave.</p>
+
+<p><img alt="Generated wave with feedback" src="../../../img/realtimeGenerativeFeedback/image14.png" width="400px" /></p>
+
+<p>Only one figure with all 1000 sampled steps is quite messy, hence the figure above shows only the first 200 ($t=0$ to $t=199$).</p>
+
+<p>It&rsquo;s very clear that the wave generated with control (green line) is much more nervous than the one without (blue line), due to the steering action that takes place at each time step. On the other hand, it&rsquo;s impressive how closely it&rsquo;s capable of following the real wave (red line).</p>
+
+<p>In some part of the simulations the results are less impressive. For example, here&rsquo;s the same data plotted on a different 200-steps interval, from $t=400$ to $t=599$.</p>
+
+<p><img alt="Generated wave with feedback" src="../../../img/realtimeGenerativeFeedback/image19.png" width="400px" /></p>
+
+<p>Overall, it seems like the wave generated with control is much better. In some part of the time horizon is not that clear, for example in the figure above around the second peak.</p>
+
+<p>It&rsquo;s good practice to come up with a single metric to compare complex functions. In this case, it&rsquo;s natural to choose the actual loss in the two cases. I computed the sum of the squared errors, with the <code>numpy.cusum</code> function. And here is the inequivocabile result.</p>
+
+<p><img alt="Cumulated losses" src="../../../img/realtimeGenerativeFeedback/image12.png" width="400px" /></p>
+
+<p>The loss with control is not actually zero, but it looks as if it was zero when compared on the same scale with the loss of the model without control. Keep in mind that the errors are squared and accumulated over time. Impressive.</p>
+
+<h2 id="technical-details">Technical Details</h2>
+
+<p>In this final section I will discuss in real depth the technical details of the experiments, both from implementation and mathematical point of view.</p>
+
+<p>First of all: I like <strong>reproducible research</strong>. In the code you will see that the experiment start off by setting the seed for random generation both in Numpy and Tensorflow.</p>
+
+<p>What about the base model? In the theoretical discussion (in the first 3 three sections), I spoke about a large, powerful, generative model. But I also said that with such large models it&rsquo;s difficult to grasp the details of plug and play.</p>
+
+<p>In this experiment I built a very simple, 3-layers model with only Dense layers.</p>
+<div class="highlight"><pre class="chroma">inpTensor = tf.keras.Input(shape=10) # x(t), x(t-1), ..., x(t-9)
+hidden1 = tf.keras.layers.Dense(
+    units=64,
+    activation=&#39;relu&#39;)(inpTensor)
+outTensor = tf.keras.layers.Dense(1, activation=&#39;tanh&#39;)(hidden1)
+model = tf.keras.Model(inputs=inpTensor, outputs=outTensor)</pre></div>
+<p>which then I trained for 200 epochs with Adam optimizer and mean squared error as loss function. To generate the dataset in the shifting windows format I used some boilerplate code from Tensorflow tutorials.</p>
+
+<p>At this point, I paused to get a rough evaluation of this model. I decided to evaluate it directly on a generative loop, to see how the generated wave compares to the real sin(t) wave.</p>
+
+<p>Here&rsquo;s how the generation is implemented.</p>
+<div class="highlight"><pre class="chroma"># Create empty container for the result, with the correct size
+x_test = np.zeros((x.shape[0], ), dtype=&#39;float32&#39;)
+ 
+# Initialize the generation with the first 10 values.
+# During generation, these are the only values that
+# I assume to know.
+x_test[0:10] = x[0:10]
+ 
+# Run the generative loop
+for i in range(10, len(x_test)):
+    # Get predicted new value from model
+    prediction = model(np.array([x_test[i-10:i]]))
+    # Append it to the new sequence.
+    x_test[i] = prediction[0][0]
+    # NOTE: In this case we don&#39;t touch the model.</pre></div>
+<p>The generative loop above produces data that I&rsquo;ve already shown in a plot.</p>
+
+<p>So far I think the details are quite standard Tensorflow stuff. Now, it&rsquo;s time to implement the PPM ideas.</p>
+
+<p>Once again, I decided on a simple approach to PPM, because I think it&rsquo;s the best way to emphasize the technical, important details. In brief, the steering action is computed with a gradient descent approach.</p>
+
+<p>Therefore, it&rsquo;s important to understand how the gradient computation works. You&rsquo;re going to appreciate that the base model is an easy one.</p>
+
+<p>Let&rsquo;s revisit some basics of Neural Networks. When we give an input $x$ to a densely connected layer, with ReLu activation, weights matrix $W_1$, and bias vector $b_1$, the layer simply computes</p>
+
+<p>$$
+a_1 = W_1 x + b_1
+$$
+$$
+z_1 = \text{relu}(a_1)
+$$</p>
+
+<p>Remember that the nonlinear step of computing $z_1$ is needed otherwise the whole network would just be a linear operator.</p>
+
+<p>In this experiment there&rsquo;s a second densely connected layer, with hyperbolic tangent activation because we want a number in $[-1, 1]$. This layer operations are:</p>
+
+<p>$$
+a_2 = W_2 z_1 + b_2
+$$
+$$
+z_2 = \hat{y} = \text{tanh}(a_2)
+$$</p>
+
+<p>and $z_2 = \hat{y}$ will be the final prediction returned by the model.</p>
+
+<p>As for the loss function $L$, it is the mean squared error, hence we&rsquo;ll have</p>
+
+<p>$$
+L(y, \hat{y}) = (y - \hat{y})^2 = (y - \text{tanh}(W_2 z_1 + b_2))^2
+$$</p>
+
+<p>The equation above clarifies that the loss function can be expressed as a function of the second layer&rsquo;s weights, and therefore it makes sense to compute the gradient with respect to those variables.</p>
+
+<p>We need therefore to compute the derivative of a composed function of the hyperbolic tangent. In particular:</p>
+
+<p>$$
+\frac{\partial L}{\partial W_2} = 2 (y - \text{tanh}(W_2 z_1 + b_2)) \frac{\partial}{\partial W_2} (y - \text{tanh}(W_2 z_1 + b_2)))
+$$</p>
+
+<p>which is a straighforward application of the rule</p>
+
+<p>$$
+\frac{\partial f^2(x)}{\partial x} = 2 f(x) \frac{\partial}{\partial x} (f(x))
+$$</p>
+
+<p>I&rsquo;ll let you work out the details of the computation (it&rsquo;s just 2 steps from here). The key information you need are</p>
+
+<p>$$
+\frac{\partial}{\partial x} \text{tanh}(c_1 x + c_2) = c_1 \text{sech}^2(c_1 x + c_2), \text{where } c_1 \text{ and } c_2 \text{ do not depend on } x.
+$$
+$$
+\text{sech}(x) = 1 / \text{cosh}(x), \text{ by definition}.
+$$</p>
+
+<p>After you&rsquo;ve done you can confirm your result with the <a href="https://www.wolframalpha.com/input/?i=derivative+tanh%28c*x+%2B+d%29">online Wolfram calculator</a>. Lovely tool.</p>
+
+<p>Long story short, we get that the gradient $g$ is</p>
+
+<p>$$
+g = \frac{\partial L}{\partial W_2} = 2 (y - z_2) (-z_1 (1 / \text{cosh}^2(a_2)))
+$$</p>
+
+<p>Bear in mind that to compute the gradient we need to have already done the forward pass and computed $z_1$, $z_2$, $a_2$. This calculus was a bit tricky for me as well, so I implemented an optional part in the notebook that manually checks the computations:</p>
+
+<ul>
+<li>The forward pass can be checked by comparing the results with the tensorflow method <code>model(inputs)</code>. Remember that invokes the <code>__call__</code> method in Python.</li>
+<li>The gradient computation can be checked by comparing with the results of Tensorflow&rsquo;s GradientTape object. That&rsquo;s in the notebook too.</li>
+</ul>
+
+<p>We&rsquo;re almost done. To implement the steering action, I change the weights of the final layer $W_2$ by applying a step in the negative direction of the gradient, exactly like it&rsquo;s done in gradient descent optimization.</p>
+
+<p>$$
+W_2 - \alpha g / ||g|| \to W_2
+$$</p>
+
+<p>I set the learning rate alpha to 0.05. As it&rsquo;s well known from basics of optimization, a too large learning rate would move the variable too far from the optimal values.</p>
+
+<p>The implementation of this steering action is quite straightforward in Tensorflow.</p>
+<div class="highlight"><pre class="chroma">model.layers[2].set_weights([
+    model.layers[2].get_weights()[0] + step,
+    model.layers[2].get_weights()[1] # don&#39;t change the bias vector
+])</pre></div>
+<p>where <code>step</code> is set equal to $- \alpha g / ||g||$.</p>
+
+<h3 id="criticism">Criticism</h3>
+
+<p>There are a few points in this experiments that make little (no) sense, and are the results of the above mentioned compromise between complexity and clarity of the code. I want to outline them quickly.</p>
+
+<p>First of all, the whole $sin$-generation task is a mental stretch, of course. Nobody needs a Neural Network to generate that. And even if that was the case, it would be very easy to build a much better model than my simple 2-layers model. I get that. But it has allowed me to design a decent showcase for this article.</p>
+
+<p>Secondly, you must have noted that to compute the steering action I used the loss between the predicted value and the real value. That means I knew the real value (in that part of the code). Why on earth am I doing all this if I knew the real value?! I get that too. It makes little sense, in this simplistic case. But you can usually get the loss directly from Tensorflow, instead of computing it manually (like I did, for the sake of clarity). Again, this is just to show off the concepts, but I agree that is another mental stretch.</p>
+
+<h2 id="conclusions-and-outlook">Conclusions and Outlook</h2>
+
+<p>For me Plug and Play models open a new world of possibilities. Two features really stand out in my opinion.</p>
+
+<p>First, PPM is accessible to everybody. I didn&rsquo;t need to pay big bucks to a GPU cloud provider, and you won&rsquo;t either (unless you are doing something very special). The largest, most famous model that you might want to use as base model in your PPM application are easily available off-the-shelf, often with details tutorial on how to put them in production in light environments.</p>
+
+<p>In second place, PPM stimulates the curious researchers and motivates them to better understand the models. Yes, to <em>understand the model</em>. There&rsquo;s, in my humble opinion, a trend that carries the idea that simply throwing a lot of data to some black-box-computer will solve our problems.</p>
+
+<p>I still believe engineers need to think to solve problems.</p>
+
+<h2 id="references-and-related-works">References (and Related Works)</h2>
+
+<p>The first time I heard about PPMs was in fact very recently, when Uber&rsquo;s Research published a <a href="https://arxiv.org/abs/1912.02164">paper</a>, along with a more accessible <a href="https://eng.uber.com/pplm/">blog post</a> and open-source code. They use PPM wonderfully for text generation, with GPT-2 (OpenAI&rsquo;s model) as base model. I recommend starting from the blog post.</p>
+
+<p>As you will read in Uber&rsquo;s paper, their research took off from an older paper that experiment with PPM in the context of image generation. This work, by researchers at the University of Wyoming, University of Freiburg, Jason Yosinski of Uber AI Labs, and none other than Yoshua Bengio, is quite more technical than Uber&rsquo;s. It&rsquo;s available as a <a href="https://arxiv.org/pdf/1612.00005.pdf">paper on arxiv</a>.</p>
+
+<p>These days, everyone has their favorite Deep Learning tool. I guess all work very well and expose a user-friendly API. I use Tensorflow, that as far as I know gets you closer to practical tasks such as deployment, but I am sure PyTorch and friends work really well too. You&rsquo;ll need Tensorflow to use <a href="https://colab.research.google.com/drive/1rpdtNQsy4VUWgCypMdsOgneHH1KQzlSM">my Colab notebook</a> though. Or, you can grab it from <a href="https://github.com/pgrandinetti/research/blob/master/RealTimeFeedbackFromTensorflowGenerativeModel.ipynb">GitHub</a> and run it with your favorite framework.</p>
+
+<p>To get a better understanding of my (simple) code, I really recommend studying Tensorflow&rsquo;s Custom Training Tutorial (<a href="https://www.tensorflow.org/tutorials/customization/custom_training">Part I</a>, <a href="https://www.tensorflow.org/tutorials/customization/custom_training_walkthrough">Part II</a>), as well as their tutorial on <a href="https://www.tensorflow.org/tutorials/text/text_generation">Text Generation</a>, my favorite application for generative models.</p>
+
+<p>Make sure to check out the amazing <a href="https://www.wolframalpha.com/input/?i=derivative+tanh%28c*x+%2B+d%29">Wolfram Online Calculator</a>. It&rsquo;s a fantastic (free) tool for symbolic calculus. Quite honestly, I use it to double check all my calculus!</p>
+
+<p>Finally, please know that constructive reviews, comments and suggestions about this article are extremely wellcome! You can reach out in a <a href="https://github.com/pgrandinetti/research/issues">number</a> of <a href="https://linkedin.com/in/grandinettipietro">ways</a>, do not hesitate.</p>
+
+
+        
+
+        
+            <hr/>
+            <section id="social-share">
+              <div class="list-inline footer-links">
+                
+
+<div class="share-box" aria-hidden="true">
+    <ul class="share">
+      
+      <li>
+        <a href="//twitter.com/share?url=https%3a%2f%2fpgrandinetti.github.io%2fresearch%2f2020%2f01%2freal-time-feedback-from-tensorflow-generative-model%2f&amp;text=Real-Time%20Feedback%20from%20Tensorflow%20Generative%20Model&amp;via=" target="_blank" title="Share on Twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fpgrandinetti.github.io%2fresearch%2f2020%2f01%2freal-time-feedback-from-tensorflow-generative-model%2f" target="_blank" title="Share on Facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//reddit.com/submit?url=https%3a%2f%2fpgrandinetti.github.io%2fresearch%2f2020%2f01%2freal-time-feedback-from-tensorflow-generative-model%2f&amp;title=Real-Time%20Feedback%20from%20Tensorflow%20Generative%20Model" target="_blank" title="Share on Reddit">
+          <i class="fab fa-reddit"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fpgrandinetti.github.io%2fresearch%2f2020%2f01%2freal-time-feedback-from-tensorflow-generative-model%2f&amp;title=Real-Time%20Feedback%20from%20Tensorflow%20Generative%20Model" target="_blank" title="Share on LinkedIn">
+          <i class="fab fa-linkedin"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fpgrandinetti.github.io%2fresearch%2f2020%2f01%2freal-time-feedback-from-tensorflow-generative-model%2f&amp;title=Real-Time%20Feedback%20from%20Tensorflow%20Generative%20Model" target="_blank" title="Share on StumbleUpon">
+          <i class="fab fa-stumbleupon"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fpgrandinetti.github.io%2fresearch%2f2020%2f01%2freal-time-feedback-from-tensorflow-generative-model%2f&amp;description=Real-Time%20Feedback%20from%20Tensorflow%20Generative%20Model" target="_blank" title="Share on Pinterest">
+          <i class="fab fa-pinterest"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+  
+
+              </div>
+            </section>
+        
+
+        
+          
+
+          
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+          
+        </ul>
+      
+
+
+      
+
+    </div>
+  </div>
+</div>
+
+    
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/pgrandinetti" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/grandinettipietro" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            <a href="" title="RSS">
+              <span class="fa-stack fa-lg">
+                <i class="fas fa-circle fa-stack-2x"></i>
+                <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+
+        
+        
+        <p class="credits theme-by text-muted">
+          Built with <a href="https://gohugo.io">Hugo</a> &nbsp;&bull;&nbsp; Theme <a href="https://github.com/pgrandinetti/beautifulhugo">Beautiful Hugo</a> adapted from <a href="https://github.com/halogenica/beautifulhugo">these</a> <a href="https://deanattali.com/beautiful-jekyll/">themes</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+function render_fn(){
+renderMathInElement(document.body, {
+  delimiters: [
+    {left: "\\[", right: "\\]", display: true},
+    {left: "\\(", right: "\\)", display: false},
+    {left: "$$", right: "$$", display: true},
+    {left: "$", right: "$", display: false},
+  ],
+  ignoredTags: [
+    "script", "noscript", "style", "textarea", "pre", "code",
+    
+    "nokatex"
+  ]
+});
+};
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous" onload="render_fn()">
+</script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="https://pgrandinetti.github.io/research/js/main.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="https://pgrandinetti.github.io/research/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+</html>
+

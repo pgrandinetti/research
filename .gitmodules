@@ -1,0 +1,3 @@
+[submodule "pubs/themes/beautifulhugo"]
+	path = pubs/themes/beautifulhugo
+	url = https://github.com/pgrandinetti/beautifulhugo.git

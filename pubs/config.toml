@@ -1,6 +1,7 @@
 baseURL = "https://pgrandinetti.github.io/research"
 languageCode = "en-us"
 title = "Research @ 360"
+#description = "Indipendent research, data-science, optimization, machine-learning"
 
 
 DefaultContentLanguage = "en"
@@ -22,6 +23,7 @@ math = true
 
 [Params]
   homeTitle = "Recent Articles" # Set a different text for the header on the home page
+  description = "Indipendent research, data-science, optimization, machine-learning"
 #  subtitle = "Nuts and bolts of Programming Languages"
   mainSections = ["page","pages","post","posts"]
   #logo = "img/avatar-icon.png" # Expecting square dimensions

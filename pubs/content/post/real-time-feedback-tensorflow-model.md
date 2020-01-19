@@ -3,6 +3,7 @@ draft: false
 title: "Real-Time Feedback from Tensorflow Generative Model"
 date: 2020-01-12
 description: "How to steer in real-time a generative Tensorflow network"
+tags: ["deep learning"]
 ---
 
 This article tells my research that took off after reading some recent research papers on Plug & Play Generative models.

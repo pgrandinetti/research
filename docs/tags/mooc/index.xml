@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Research @ 360</title>
-    <link>https://pgrandinetti.github.io/research/</link>
-    <description>Recent content on Research @ 360</description>
+    <title>MOOC on Research @ 360</title>
+    <link>https://pgrandinetti.github.io/research/tags/mooc/</link>
+    <description>Recent content in MOOC on Research @ 360</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 19 Jan 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://pgrandinetti.github.io/research/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://pgrandinetti.github.io/research/tags/mooc/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -21,17 +21,6 @@
 I have been, more than once, even with very high-quality courses.
 But&amp;hellip; why? As someone who has completed more than 50 MOOCs, I learnt that to ask questions is the best way to learn. Then again, why the disappointment?
 I think the key part is &amp;ldquo;high-quality&amp;rdquo; MOOC. My disappointment wasn&amp;rsquo;t with the quality of the lectures (outstanding), nor with the quality with the courses&amp;rsquo; platform (excellent).</description>
-    </item>
-    
-    <item>
-      <title>Real-Time Feedback from Tensorflow Generative Model</title>
-      <link>https://pgrandinetti.github.io/research/2020/01/real-time-feedback-from-tensorflow-generative-model/</link>
-      <pubDate>Sun, 12 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://pgrandinetti.github.io/research/2020/01/real-time-feedback-from-tensorflow-generative-model/</guid>
-      <description>This article tells my research that took off after reading some recent research papers on Plug &amp;amp; Play Generative models.
-Generative Deep Network Models can be powerful: they are trained to take a (small) sequence of data in input and to predict what the next element of the sequence should be.
-The most famous applications of such models are in Natural Language Processing (NLP). When given a sequence of words, Generative Networks can predict the next word.</description>
     </item>
     
   </channel>

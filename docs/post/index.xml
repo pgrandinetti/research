@@ -6,10 +6,22 @@
     <description>Recent content in Posts on Research @ 360</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 12 Jan 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 19 Jan 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://pgrandinetti.github.io/research/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Make the most out of Your MOOC</title>
+      <link>https://pgrandinetti.github.io/research/2020/01/make-the-most-out-of-your-mooc/</link>
+      <pubDate>Sun, 19 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://pgrandinetti.github.io/research/2020/01/make-the-most-out-of-your-mooc/</guid>
+      <description>Have you ever been disappointed with a MOOC?
+I have been, more than once, even with very high-quality courses.
+But&amp;hellip; why? As someone who has completed more than 50 MOOCs, I learnt that to ask questions is the best way to learn. Then again, why the disappointment?
+I think the key part is &amp;ldquo;high-quality&amp;rdquo; MOOC. My disappointment wasn&amp;rsquo;t with the quality of the lectures (outstanding), nor with the quality with the courses&amp;rsquo; platform (excellent).</description>
+    </item>
     
     <item>
       <title>Real-Time Feedback from Tensorflow Generative Model</title>

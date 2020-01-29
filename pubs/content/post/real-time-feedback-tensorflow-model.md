@@ -333,7 +333,7 @@ where `step` is set equal to $- \alpha g / ||g||$.
 
 ### Criticism
 
-There are a few points in this experiments that make little (no) sense, and are the results of the above mentioned compromise between complexity and clarity of the code. I want to outline them quickly.
+There are a few points in this experiment that make little (no) sense, and are the results of the above mentioned compromise between complexity and clarity of the code. I want to outline them quickly.
 
 First of all, the whole $sin$-generation task is a mental stretch, of course. Nobody needs a Neural Network to generate that. And even if that was the case, it would be very easy to build a much better model than my simple 2-layers model. I get that. But it has allowed me to design a decent showcase for this article.
 

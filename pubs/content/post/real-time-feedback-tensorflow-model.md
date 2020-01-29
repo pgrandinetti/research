@@ -361,4 +361,4 @@ To get a better understanding of my (simple) code, I really recommend studying T
 
 Make sure to check out the amazing [Wolfram Online Calculator](https://www.wolframalpha.com/input/?i=derivative+tanh%28c*x+%2B+d%29). It's a fantastic (free) tool for symbolic calculus. Quite honestly, I use it to double check all my calculus!
 
-Finally, please know that constructive reviews, comments and suggestions about this article are extremely wellcome! You can reach out in a [number](https://github.com/pgrandinetti/research/issues) of [ways](https://linkedin.com/in/grandinettipietro), do not hesitate.
+Finally, please know that constructive reviews, comments and suggestions about this article are extremely welcome! You can reach out in a [number](https://github.com/pgrandinetti/research/issues) of [ways](https://linkedin.com/in/grandinettipietro), do not hesitate.

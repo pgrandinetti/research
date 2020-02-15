@@ -3,6 +3,36 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://pgrandinetti.github.io/research/2020/02/how-to-compute-word-embeddings-with-pure-optimization/</loc>
+    <lastmod>2020-02-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pgrandinetti.github.io/research/tags/nlp/</loc>
+    <lastmod>2020-02-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pgrandinetti.github.io/research/tags/optimization/</loc>
+    <lastmod>2020-02-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pgrandinetti.github.io/research/post/</loc>
+    <lastmod>2020-02-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pgrandinetti.github.io/research/</loc>
+    <lastmod>2020-02-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://pgrandinetti.github.io/research/tags/</loc>
+    <lastmod>2020-02-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://pgrandinetti.github.io/research/tags/education/</loc>
     <lastmod>2020-01-19T00:00:00+00:00</lastmod>
   </url>
@@ -14,21 +44,6 @@
   
   <url>
     <loc>https://pgrandinetti.github.io/research/tags/mooc/</loc>
-    <lastmod>2020-01-19T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pgrandinetti.github.io/research/post/</loc>
-    <lastmod>2020-01-19T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pgrandinetti.github.io/research/</loc>
-    <lastmod>2020-01-19T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://pgrandinetti.github.io/research/tags/</loc>
     <lastmod>2020-01-19T00:00:00+00:00</lastmod>
   </url>
   

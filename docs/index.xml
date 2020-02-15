@@ -6,10 +6,20 @@
     <description>Recent content on Research @ 360</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 19 Jan 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 15 Feb 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://pgrandinetti.github.io/research/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>How To Compute Word Embeddings with pure Optimization</title>
+      <link>https://pgrandinetti.github.io/research/2020/02/how-to-compute-word-embeddings-with-pure-optimization/</link>
+      <pubDate>Sat, 15 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://pgrandinetti.github.io/research/2020/02/how-to-compute-word-embeddings-with-pure-optimization/</guid>
+      <description>Word embeddings are one of the most important achievements in Natural Language Processing (NLP) of recent years. Unlike the tinier and tinier percentage improvement achieved on some famous task, that are usually the highlight of many papers, word embeddings are a conceptual achievement.
+Today, they are so well-known that every more word of mine about them would be quite useless. But just to set the pace: the words embeddings are vectors of real numbers in a very high dimensional space (everywhere from 50 on), such that words that are &amp;ldquo;related&amp;rdquo; have similar embeddings.</description>
+    </item>
     
     <item>
       <title>Make the most out of Your MOOC</title>

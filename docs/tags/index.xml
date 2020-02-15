@@ -6,10 +6,28 @@
     <description>Recent content in Tags on Research @ 360</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 19 Jan 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 15 Feb 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://pgrandinetti.github.io/research/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>nlp</title>
+      <link>https://pgrandinetti.github.io/research/tags/nlp/</link>
+      <pubDate>Sat, 15 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://pgrandinetti.github.io/research/tags/nlp/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>optimization</title>
+      <link>https://pgrandinetti.github.io/research/tags/optimization/</link>
+      <pubDate>Sat, 15 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://pgrandinetti.github.io/research/tags/optimization/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>education</title>

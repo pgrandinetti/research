@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+  <head>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+
+    <title>How To Compute Word Embeddings with pure Optimization | Research @ 360</title>
+
+  <meta name="description" content="How to use Gradient Descent to optimize word embeddings without Neural Networks">
+  <meta name="author" content="Pietro"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Research @ 360",
+    
+    "url": "https:\/\/pgrandinetti.github.io\/research"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "https:\/\/pgrandinetti.github.io\/research"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/pgrandinetti.github.io\/research",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/pgrandinetti.github.io\/research\/2020\/02\/how-to-compute-word-embeddings-with-pure-optimization\/",
+          "name": "How to compute word embeddings with pure optimization"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "Pietro"
+  },
+  "headline": "How To Compute Word Embeddings with pure Optimization",
+  "description" : "How to use Gradient Descent to optimize word embeddings without Neural Networks",
+  "inLanguage" : "en",
+  "wordCount":  3481 ,
+  "datePublished" : "2020-02-15T00:00:00",
+  "dateModified" : "2020-02-15T00:00:00",
+  "image" : "https:\/\/pgrandinetti.github.io\/research",
+  "keywords" : [ "nlp, optimization" ],
+  "mainEntityOfPage" : "https:\/\/pgrandinetti.github.io\/research\/2020\/02\/how-to-compute-word-embeddings-with-pure-optimization\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/pgrandinetti.github.io\/research",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/pgrandinetti.github.io\/research",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+<meta property="og:title" content="How To Compute Word Embeddings with pure Optimization" />
+<meta property="og:description" content="How to use Gradient Descent to optimize word embeddings without Neural Networks">
+<meta property="og:url" content="https://pgrandinetti.github.io/research/2020/02/how-to-compute-word-embeddings-with-pure-optimization/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Research @ 360" />
+
+  <meta name="twitter:title" content="How To Compute Word Embeddings with pure Optimization" />
+  <meta name="twitter:description" content="How to use Gradient Descent to optimize word embeddings without Neural Networks">
+  <meta name="twitter:card" content="summary" />
+  <meta name="generator" content="Hugo 0.58.3" />
+  <link rel="alternate" href="https://pgrandinetti.github.io/research/index.xml" type="application/rss+xml" title="Research @ 360">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"><link rel="stylesheet" href="https://pgrandinetti.github.io/research/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://pgrandinetti.github.io/research/css/syntax.css" /><link rel="stylesheet" href="https://pgrandinetti.github.io/research/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://pgrandinetti.github.io/research">Research @ 360</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="About" href="https://pgrandinetti.github.io">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Open-Source" href="https://github.com/pgrandinetti/research">Open-Source</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              
+                <h1>How To Compute Word Embeddings with pure Optimization</h1>
+              
+              
+              
+              
+                
+                
+                  <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;Posted on February 15, 2020
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;17&nbsp;minutes
+  
+  
+  
+  
+</span>
+
+
+                
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        
+
+<p>Word embeddings are one of the most important achievements in Natural Language Processing (NLP) of recent years. Unlike the tinier and tinier percentage improvement achieved on some famous task, that are usually the highlight of many papers, word embeddings are a <strong>conceptual achievement</strong>.</p>
+
+<p>Today, they are so well-known that every more word of mine about them would be quite useless. But just to set the pace: the words embeddings are <em>vectors of real numbers in a very high dimensional space (everywhere from 50 on), such that words that are &ldquo;related&rdquo; have similar embeddings</em>. For example, “dog” and “puppy” should have similar embeddings. So should “dog” and “cat”, at least in some dimension, as they both refer to pets. Even “Berlin” and “Rome” should be quite similar in some directions, as they are both capital cities.</p>
+
+<p>When I first heard about (and studied) word embeddings my reaction was&ndash; this is both <em>genius and beautiful</em>.</p>
+
+<p>The idea of taking words from vocabulary and projecting them into a numerical space is, in my opinion, fascinating, brilliant and&hellip; good! It works amazingly well and has been the starting point of many revolutionary approaches in a lot of great applications.</p>
+
+<h2 id="where-do-embeddings-come-from">Where do Embeddings Come from?</h2>
+
+<p>I’ve noticed that most explanations and tutorials about word embeddings, some of which are really well done, take off by talking about Neural Networks, Deep Learning and so on.</p>
+
+<p>On the one hand, that’s just fine. For instance, <a href="https://arxiv.org/pdf/1301.3781.pdf">this tutorial</a> explains embeddings really well and presents them as the final state of an intermediate layer in a densely connected neural network. That works, and it’s a very little cute application of neural networks, powerful as usual (especially because they are universal approximators, as well known). Furthermore, that tutorial is very successful at explaining how training data are prepared for this application, which is very useful to know. All in all, I recommend reading it. It’s not by chance that is even recommended in Stanford’s class on NLP and Deep Learning.</p>
+
+<p>On the other hand, that’s not the whole story. It can’t be the case that everything is always about Deep Networks.</p>
+
+<p>And in fact, the original word embeddings paper (the “word2vec paper”, as it is usually referred to), doesn’t deal with networks. It makes heavy use of optimization though (and don’t get me started on why Deep Networks are “just” an application of Optimization).</p>
+
+<p>With Networks, we have a nice visualization. We get layers and units (once upon a time called neurons). We get arrows to describe forward pass and backpropagation. And we don’t care too much about gradient descent as long as tensorflow (or a similar software) takes care of it (which is a bad approach, in my opinion).</p>
+
+<p>Mathematical optimization gets us in the middle of our discomfort zone, as it’s a much more theoretical subject. That being said, I do believe it’s the forgotten key to open up any Deep Network secret. Not surprisingly, word embeddings come entirely from numerical optimization.</p>
+
+<h2 id="objectives">Objectives</h2>
+
+<p>This article’s primary goal is to clarify (to myself first) the details about how to get word embeddings using <strong>only numerical optimization</strong>. No machine learning techniques.</p>
+
+<p>To do that, I will review the step-by-step optimization procedure that is introduced in the original word2vec paper. Understanding an optimization algorithm usually involves three steps, and this case is not an exception:</p>
+
+<ul>
+<li>Understanding optimization variables and constraints.</li>
+<li>Understanding the objective function.</li>
+<li>Understanding the iterative procedure to find the solutions.</li>
+</ul>
+
+<p>The other key point to understand is how to match words to variables and parameters in an optimization algorithm. What words correspond to what variables? This is not a theoretical subject, and it simply means how the data (corpus) is organized before feeding it into the algorithm.</p>
+
+<p>Last, but definitely not least, to fully grasp the most subtle details I will show a very simple experiment on how to run the optimization procedure, and what kind of result to expect from it in terms of word embeddings.</p>
+
+<h2 id="data-preparation">Data Preparation</h2>
+
+<p>The name “corpus” in NLP applications refers to a body of text, possibly made by multiple documents, each made of many paragraphs and sentences. Preparing a corpus for a word embeddings-based algorithm is a relatively simple procedure that has become quite standard in many applications. Let’s quickly review it.</p>
+
+<p>The whole strategy is based on a &ldquo;context-window approach&rdquo;. The text is analyzed word by word, or even token by token (where a token can be a word, a punctuation symbol or a few more things), and each time a token is selected, it assumes the role of “center token”. Every token around it gets the role of context token.</p>
+
+<p>How many context tokens there can be around a center token? It depends on a parameter, usually called window-size. This is an algorithm parameter (a hyperparameter, if you will) and it obviously affects the end result.</p>
+
+<p>For each center word, and given the window size $w$, we can construct $w$ pairs of words. In each pair one element is the center word and the other is a context word.</p>
+
+<p>Let’s see an example. It’s given the following sentence: “The apple is on the table.” and a window size equal to 2.</p>
+
+<p>When the center word is “on”, we’ll get the following pairs: (apple, on), (is, on), (on, the), (on, table). Basically, we get 2 words on the left and two on the right of the center word and build pairs with them.</p>
+
+<p>Clearly, when the center word is at the beginning of the sentence we can’t take too many words on its left side. This happens for instance when the center word is “apple”. Viceversa, when it’s near the end of the sentence (for example “table”) we can’t take many words on its right side.</p>
+
+<p>All pairs we get from this procedure will form the input to the optimization algorithm. Let’s talk about that one.</p>
+
+<h2 id="optimization-strategy">Optimization Strategy</h2>
+
+<p>So far we’ve got a bunch of pairs of words, and we know we want to get word embeddings using them.</p>
+
+<p>A good rule of thumb to design an optimization algorithm is to start with deciding about optimization variables and constraints. While doing this, keep in mind that the actual values of these variables change at each step of the optimization procedure, and that by the end of it we want to do something useful with those values!</p>
+
+<p>In this specific application, we want to have the embeddings ready by the end of the optimization. Thus, there’s little doubt that we need to represent the embeddings within the optimization variables. The question is <em>how</em>.</p>
+
+<p>A solution that makes the calculus simpler is to use two vectors for each word. One when that word is the center word, and the other when it’s a context word. Though this may seem odd initially, it does simplify the math a bit. The original word2vec paper contains more details about this trick, so I am going to refer you to it (see the references at the end).</p>
+
+<p>There are no constraints on these vectors, except that they have to contain real numbers.</p>
+
+<p>Remember: whatever optimization algorithm we use, for instance gradient descent, it will make some small changes to these vectors at each step of the procedure and by the end of it we should have meaningful (and useful) values in them.</p>
+
+<p>The other key point of optimization is the <em>cost function</em>. This function is what steers the variables towards “better” values.</p>
+
+<p>Consider an example: to optimize a gasoline car’s engine you may want to reduce emissions. Then you should design a cost function, computable via variables such as the rotational speed, friction, etc., that describes how the emissions relate to those variables. Then, to minimize that cost function effectively means to find values for those variables that reduce emissions.</p>
+
+<p>Oftentimes the choice of the cost function is the real piece of creativity in the engineer’s work. And word embeddings is a very good example of it: in my opinion, it is where all the brilliance lies.</p>
+
+<p>The starting point is that if two words appear very often in the same context window, then we want them to have similar embeddings. This is already a brilliant concept in itself, just that it has been repeated so many times that we have forgotten how clever it is.</p>
+
+<p>Now, how to represent the information “two vectors are similar”? Luckily, the basics of algebra tell us that the higher the dot product between two vectors, the more similar they are. There’s a problem though: dot-product can be negative, and this is not good for optimization.</p>
+
+<p>Meet the exponential function: it makes every positive (and bigger). Thus, we can use the exponential of the dot-product between two variables. Let’s call it A.</p>
+
+<p>Things aren’t quite clear yet. Even if we compute that, how do we know that is “big”? How big is big? A billion, or more? There’s no space for subjectivity in optimization, we need a more absolute metric.</p>
+
+<p>This is easily solvable. Let’s divide each A value by the same factor, and we would know how big are they with respect to the same factor. This is a common strategy indeed. But how to choose such a factor? There’s again a common solution to this problem: divide each term by the sum of all of them.</p>
+
+<p>By doing this, we will know how big each A is with respect to the sum of all of them. Clever.</p>
+
+<p>Let’s now go on to some more details. Let’s say two optimization variables are $x_i$ and $x_j$. They both correspond to word embeddings, for two different words.</p>
+
+<p>When $x_j$ is the center word, the first term we need to compute is</p>
+
+<p>$$
+\exp (x_i^T x_j)
+$$</p>
+
+<p>which is what I have called A so far. Then, let’s say we have a total of $V$ tokens, hence $V$ word embeddings and also $V$ optimization variables, each of a given dimensionality. The second term to compute is</p>
+
+<p>$$
+\sum_{k\in V} \exp (x_k^T x_j)
+$$</p>
+
+<p>and we need to divide them:</p>
+
+<p>$$ S(i,j) = \exp (x_i^T x<em>j) \sum</em>{k\in V} \exp (x_k^T x_j). $$</p>
+
+<p>This function expresses the similarity between the embeddings $x_i$ and $x_j$.</p>
+
+<p>The way the similarity function is built is typical of the <strong>softmax approach</strong>. Softmax is a numerical trick that given a set of real-values functions (such as exponential of dot-products) produces a probability distribution out of them. Such distribution has some nice numerical <a href="https://en.wikipedia.org/wiki/Softmax_function">properties</a>.</p>
+
+<p>At this point we need to think about the data we have and look at them anew in view of what said so far. We have a long list of tokens, grouped into pairs, and we want to find numerical vectors (embeddings) such that these vectors are similar for nearby words. We also have given a precise meaning to “similar”, with the similarity function.</p>
+
+<p>But how to make sure that we get similar vectors for all pairs? Well, we have to loop through each pair and sum their similarities up, and then optimize the total value.</p>
+
+<p>With that, we finally get the overall cost function:</p>
+
+<p>$$
+L(V) = \prod_{(i,j)} S(i,j)
+$$</p>
+
+<p>where $(i,j)$ is a valid pair, according to the corpus and the window size.</p>
+
+<p>Why is there a product, instead of a sum? In short, it’s because similarity behaves like a probability distribution, and the chances of two independent events happening is the product of the two individual probabilities.</p>
+
+<p>Now that we’ve got a cost function that makes sense, there’s one last question to be asked: what do we want to do with it?</p>
+
+<p>Since the cost function is a product of similarities between words that appear nearby, and we want to have high similarities for such words, the objective is to <strong>maximize the cost function</strong>.</p>
+
+<p>From here, the rest are “just” numerical tricks.</p>
+
+<ul>
+<li>First, multiply the cost function for a constant value, $1/V$. Multiplication by a constant term is known to not change the optimal value of the variables.</li>
+<li>Instead of maximizing the cost function directly, maximize it logarithmic value. This is only known to not change the optimal variables, and is a well-known trick used when there’s a product as the cost function.</li>
+<li>Transform the log of the product into a sum of logs, according to basics of exponential calculus.</li>
+<li>Instead of maximizing $F$, minimize $-F$. Yet another well known trick.</li>
+</ul>
+
+<p>After these simple manipulations, we get that optimization problem has become</p>
+
+<p>$$ \min_{x<em>k k\in V} \frac{-1}{T} \sum</em>{(i,j)} \log S(x_i,x_j). $$</p>
+
+<h2 id="discussion">Discussion</h2>
+
+<p>Before jumping into the description of my simple experiment, and looking into the code, there’s one remark worth making.</p>
+
+<p>The logical reasoning we’ve followed has led us to the following statement: <em>when we solve the optimization problem stated above, we will get the word embeddings with the maximum similarity for words that are in the same contexts</em>.</p>
+
+<p>When you look at it from this point of view, it may sound like black magic. Especially when compared to those tutorial based on Neural Networks, it’s not clear how the correct embeddings are generated via pure optimization.</p>
+
+<p>Here’s how the algorithm works. First of all, initial values are (randomly) chosen for all variables. Then, the algorithm looks at the current value of the cost function with those values, compute the gradient with respect to them, and move them in the direction of the negative gradient, because that is the direction that leads to the minimum point of the cost function.</p>
+
+<p>These steps are repeated iteratively, until a saddle point is reached.</p>
+
+<p>As you may know, I’ve basically described the principles of a (naive) implementation of the gradient descent.</p>
+
+<h2 id="experiment">Experiment</h2>
+
+<p>For the sake of simplicity I have designed a very basic example that has enabled me to focus on the actual details of the embeddings optimization, instead of the complexity of the code. Links to GitHub and Colab are in the references at the end of this article.</p>
+
+<p>First of all, I created a dummy corpus that contains only 4 sentences. It’s important to understand that word embeddings become really useful only when they are optimized on <em>a lot</em> of data. Four sentences is definitely not a lot. Hence, the result may make little sense, numerically, but I argue that it’s good for educational purposes.</p>
+
+<p>That being said, here are some of those four sentences.</p>
+<div class="highlight"><pre class="chroma">corpus = [
+&#39;They do not play games.&#39;,
+&#39;You do not like politics.&#39;,
+&#39;We do not eat meat.&#39;
+]</pre></div>
+<p>I then used some boilerplate code taken from Tensorflow documentation. This code makes it easy to tokenize textual data, as well as adding dummy tokens <code>&lt;start&gt;</code> and <code>&lt;end&gt;</code> at the beginning and at the end of each sentence.</p>
+
+<p>I wrote my own (simple) code to get the chosen window-size, find the left and right context for each word, and build the pairs that make the input dataset for the algorithm.</p>
+
+<p>For example, with window size equal to 1, the pairs generated by the last sentence are:</p>
+<div class="highlight"><pre class="chroma">&lt;start&gt; ---&gt; we
+we ---&gt; &lt;start&gt;
+we ---&gt; do
+do ---&gt; we
+do ---&gt; not
+not ---&gt; do
+not ---&gt; eat
+eat ---&gt; not
+eat ---&gt; meat
+meat ---&gt; eat
+meat ---&gt; .
+. ---&gt; meat
+. ---&gt; &lt;end&gt;
+&lt;end&gt; ---&gt; .</pre></div>
+<p>Notice that the token “we” appears twice as the first word in a pair, because it has one token in its left context (<code>&lt;start&gt;</code>) and one in its right context (“do”). But it also appears twice as the second word: that is when it’s a context word.</p>
+
+<p>I then wrote some very simple code to initialize all embeddings with random values, by using <code>numpy</code>. For the sake of compact code, and also for the sake of clarity, I stacked all the embeddings in a matrix, naming it $\Theta$&ndash; common name for optimization variables.</p>
+
+<p>When optimization runs, we need a way to compute the current loss (current with respect to the current variables values) as well as the gradient of such loss with respect to the variables. As I mentioned, this is easily done with the <code>GradientTape</code> class from Tensorflow. The only trick I needed to pull was to transform the data into valid tensor objects, to process them with GradientTape. Anyway, conversion from numpy to tensorflow is very easy.</p>
+<div class="highlight"><pre class="chroma">def loss_total(theta, samples):
+    &#39;&#39;&#39;
+    Compute the overall loss for the current value of the parameters.
+ 
+    :param theta: The algorithm parameters.
+    :param samples: List of lists with the shifting windows for training.
+    &#39;&#39;&#39;
+    loss = tf.convert_to_tensor(0., dtype=&#39;float64&#39;)
+    with tf.GradientTape() as gt:
+        gt.watch(theta)
+        for sample in samples:
+            i = sample[0] # this is always the center word
+            j = sample[1] # context word
+            loss -= loss_element(i, j, theta)
+        loss /= len(samples)  # 1/T
+    # now get gradient thanks to GradientTape
+    dTheta = gt.gradient(loss, theta)
+    return loss, dTheta</pre></div>
+<p>Finally, I implemented a basic gradient descent loop. Gradient descent is an intuitive algorithm, but an efficient implementation would not be straightforward. Please bear with my simple code: as I said, it’s for illustrative purposes.</p>
+
+<p>Here’s what happens to the cost function during the optimization procedure:</p>
+
+<p><img alt="Cumulated losses" src="../../../img/embeddings1-1/image7.png" width="400px" /></p>
+
+<p>Nicely decreasing. Couldn’t it decrease further? To answer, let’s zoom in to the final steps of the figure above.</p>
+
+<p><img alt="Cumulated losses" src="../../../img/embeddings1-1/image6.png" width="400px" /></p>
+
+<p>When the cost function begins to oscillate, it’s the sign that we’ve got to stop the iterative procedure. It would be possible to go back, change some hyperparameter (like the learning rate) and run the optimization again.</p>
+
+<p>Other than looking at the cost function, how can we get a sense of what the optimization did to the word embeddings?</p>
+
+<p>Here’s a possible point of view. Let’s select one word and assign the role of center word to it, say “do”. Then, let’s look at the dot product of this word’s embeddings with all the other token’s embeddings in the corpus, before optimization.</p>
+<div class="highlight"><pre class="chroma">Test word 0=&lt;start&gt; &gt;&gt; tf.Tensor(1.1288971789500877, shape=(), dtype=float64)
+Test word 1=they &gt;&gt; tf.Tensor(1.1071297588475966, shape=(), dtype=float64)
+Test word 2=do &gt;&gt; tf.Tensor(1.0956330843438067, shape=(), dtype=float64)
+Test word 3=not &gt;&gt; tf.Tensor(1.116146169619466, shape=(), dtype=float64)
+Test word 4=play &gt;&gt; tf.Tensor(1.0905545227921793, shape=(), dtype=float64)
+Test word 5=games &gt;&gt; tf.Tensor(1.1071061567928535, shape=(), dtype=float64)
+Test word 6=. &gt;&gt; tf.Tensor(1.0999922273865987, shape=(), dtype=float64)
+Test word 7=&lt;end&gt; &gt;&gt; tf.Tensor(1.0823367373518211, shape=(), dtype=float64)
+Test word 8=she &gt;&gt; tf.Tensor(1.1132202869717551, shape=(), dtype=float64)
+Test word 9=enjoy &gt;&gt; tf.Tensor(1.0931868886201406, shape=(), dtype=float64)
+Test word 10=movies &gt;&gt; tf.Tensor(1.1054280115514683, shape=(), dtype=float64)
+Test word 11=you &gt;&gt; tf.Tensor(1.1085722458218914, shape=(), dtype=float64)
+Test word 12=like &gt;&gt; tf.Tensor(1.1221265734130785, shape=(), dtype=float64)
+Test word 13=politics &gt;&gt; tf.Tensor(1.1075488268359415, shape=(), dtype=float64)
+Test word 14=we &gt;&gt; tf.Tensor(1.0993974247747675, shape=(), dtype=float64)
+Test word 15=eat &gt;&gt; tf.Tensor(1.1008740289060956, shape=(), dtype=float64)
+Test word 16=meat &gt;&gt; tf.Tensor(1.1136024959532387, shape=(), dtype=float64)</pre></div>
+<p>As you can see, there’s little-no-difference in the products, no matter what context word is selected.</p>
+
+<p>Now let’s look at the same values calculated <em>after</em> optimization.</p>
+<div class="highlight"><pre class="chroma">Test word 0=&lt;start&gt; &gt;&gt; tf.Tensor(0.31829067616650725, shape=(), dtype=float64)
+Test word 1=they &gt;&gt; tf.Tensor(96.39118135113179, shape=(), dtype=float64)
+Test word 2=do &gt;&gt; tf.Tensor(0.07839746275724133, shape=(), dtype=float64)
+Test word 3=not &gt;&gt; tf.Tensor(265.47320718665674, shape=(), dtype=float64)
+Test word 4=play &gt;&gt; tf.Tensor(0.18064613586322822, shape=(), dtype=float64)
+Test word 5=games &gt;&gt; tf.Tensor(0.3686308526571574, shape=(), dtype=float64)
+Test word 6=. &gt;&gt; tf.Tensor(0.07539733403450666, shape=(), dtype=float64)
+Test word 7=&lt;end&gt; &gt;&gt; tf.Tensor(0.018871837503493753, shape=(), dtype=float64)
+Test word 8=she &gt;&gt; tf.Tensor(96.34016252586977, shape=(), dtype=float64)
+Test word 9=enjoy &gt;&gt; tf.Tensor(0.019857738915322647, shape=(), dtype=float64)
+Test word 10=movies &gt;&gt; tf.Tensor(0.3100757746416495, shape=(), dtype=float64)
+Test word 11=you &gt;&gt; tf.Tensor(96.50989558451292, shape=(), dtype=float64)
+Test word 12=like &gt;&gt; tf.Tensor(0.07869309499908729, shape=(), dtype=float64)
+Test word 13=politics &gt;&gt; tf.Tensor(0.49626054421077886, shape=(), dtype=float64)
+Test word 14=we &gt;&gt; tf.Tensor(96.37172527931939, shape=(), dtype=float64)
+Test word 15=eat &gt;&gt; tf.Tensor(0.033494225834981795, shape=(), dtype=float64)
+Test word 16=meat &gt;&gt; tf.Tensor(0.3012141463330023, shape=(), dtype=float64)</pre></div>
+<p>Note how some context words get very high values: “they”, “not”, “she”, “we”, “you”. Why’s that?</p>
+
+<p>These are the words (tokens, if you prefer) that appear most often in the context of the center word “do”, given the window size 1. Therefore, gradient descent acts so to steer the embedding in order to have higher dot product between them.</p>
+
+<h2 id="conclusions-references-and-code">Conclusions, References and Code</h2>
+
+<p>In this article I spoke about word embeddings, a first-class citizen in Deep Learning and Natural Language Processing. I illustrated a too-often-forgotten way to compute word embeddings, that is based on pure optimization, and doesn’t require knowledge of Neural Networks.</p>
+
+<p>Worth knowing, this is how embeddings were presented in the seminal word2vec <a href="https://arxiv.org/pdf/1301.3781.pdf">paper</a>. I do recommend reading that paper, even though it may seem a bit difficult at first sight. If that’s the case, then I believe reading it after having read this article of mine should help. Even better, you can check out the class “NLP with Deep Learning” at Stanford, that is also available on <a href="https://www.youtube.com/playlist?list=PLoROMvodv4rOhcuXMZkNm7j3fVwBBY42z">youtube</a>.</p>
+
+<p>If you really can’t leave without Deep Networks, then there are a bunch of good tutorials online that explain how it is possible to compute them using neural networks, like <a href="http://mccormickml.com/2016/04/19/word2vec-tutorial-the-skip-gram-model/">this one</a>. Though, frankly, and this may sound a bit too extreme, I’ve always seen deep networks as a fancy (and very successful) application of advanced optimization: compose a (real) lot of nonlinear functions each into the others and then try to fit a whole lot of parameters. Yeah, I know&hellip;</p>
+
+<p>Last, but definitely not least, feel free to check out my code, either on <a href="https://github.com/pgrandinetti/research/blob/master/Embeddings1_1.ipynb">GitHub</a> or in a <a href="https://colab.research.google.com/drive/1-ERPoJ3SP8HLwg6hMLhIjMCPFxHEk2CY">Colab</a>, and come back to me with questions or suggestions.</p>
+
+
+        
+          <div class="blog-tags">
+            
+              <a href="https://pgrandinetti.github.io/research/tags/nlp/">nlp</a>&nbsp;
+            
+              <a href="https://pgrandinetti.github.io/research/tags/optimization/">optimization</a>&nbsp;
+            
+          </div>
+        
+
+        
+            <hr/>
+            <section id="social-share">
+              <div class="list-inline footer-links">
+                
+
+<div class="share-box" aria-hidden="true">
+    <ul class="share">
+      
+      <li>
+        <a href="//twitter.com/share?url=https%3a%2f%2fpgrandinetti.github.io%2fresearch%2f2020%2f02%2fhow-to-compute-word-embeddings-with-pure-optimization%2f&amp;text=How%20To%20Compute%20Word%20Embeddings%20with%20pure%20Optimization&amp;via=" target="_blank" title="Share on Twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fpgrandinetti.github.io%2fresearch%2f2020%2f02%2fhow-to-compute-word-embeddings-with-pure-optimization%2f" target="_blank" title="Share on Facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//reddit.com/submit?url=https%3a%2f%2fpgrandinetti.github.io%2fresearch%2f2020%2f02%2fhow-to-compute-word-embeddings-with-pure-optimization%2f&amp;title=How%20To%20Compute%20Word%20Embeddings%20with%20pure%20Optimization" target="_blank" title="Share on Reddit">
+          <i class="fab fa-reddit"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fpgrandinetti.github.io%2fresearch%2f2020%2f02%2fhow-to-compute-word-embeddings-with-pure-optimization%2f&amp;title=How%20To%20Compute%20Word%20Embeddings%20with%20pure%20Optimization" target="_blank" title="Share on LinkedIn">
+          <i class="fab fa-linkedin"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fpgrandinetti.github.io%2fresearch%2f2020%2f02%2fhow-to-compute-word-embeddings-with-pure-optimization%2f&amp;title=How%20To%20Compute%20Word%20Embeddings%20with%20pure%20Optimization" target="_blank" title="Share on StumbleUpon">
+          <i class="fab fa-stumbleupon"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fpgrandinetti.github.io%2fresearch%2f2020%2f02%2fhow-to-compute-word-embeddings-with-pure-optimization%2f&amp;description=How%20To%20Compute%20Word%20Embeddings%20with%20pure%20Optimization" target="_blank" title="Share on Pinterest">
+          <i class="fab fa-pinterest"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+  
+
+              </div>
+            </section>
+        
+
+        
+          
+
+          
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://pgrandinetti.github.io/research/2020/01/make-the-most-out-of-your-mooc/" data-toggle="tooltip" data-placement="top" title="Make the most out of Your MOOC">&larr; Previous Post</a>
+            </li>
+          
+          
+        </ul>
+      
+
+
+      
+
+    </div>
+  </div>
+</div>
+
+    
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/pgrandinetti" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/grandinettipietro" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            <a href="" title="RSS">
+              <span class="fa-stack fa-lg">
+                <i class="fas fa-circle fa-stack-2x"></i>
+                <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+
+        
+        
+        <p class="credits theme-by text-muted">
+          Built with <a href="https://gohugo.io">Hugo</a> &nbsp;&bull;&nbsp; Theme <a href="https://github.com/pgrandinetti/beautifulhugo">Beautiful Hugo</a> adapted from <a href="https://github.com/halogenica/beautifulhugo">these</a> <a href="https://deanattali.com/beautiful-jekyll/">themes</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+function render_fn(){
+renderMathInElement(document.body, {
+  delimiters: [
+    {left: "\\[", right: "\\]", display: true},
+    {left: "\\(", right: "\\)", display: false},
+    {left: "$$", right: "$$", display: true},
+    {left: "$", right: "$", display: false},
+  ],
+  ignoredTags: [
+    "script", "noscript", "style", "textarea", "pre", "code",
+    
+    "nokatex"
+  ]
+});
+};
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous" onload="render_fn()">
+</script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="https://pgrandinetti.github.io/research/js/main.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="https://pgrandinetti.github.io/research/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+</html>
+

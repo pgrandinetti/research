@@ -61,7 +61,7 @@
   "headline": "How To Compute Word Embeddings with pure Optimization",
   "description" : "How to use Gradient Descent to optimize word embeddings without Neural Networks",
   "inLanguage" : "en",
-  "wordCount":  3481 ,
+  "wordCount":  3480 ,
   "datePublished" : "2020-02-15T00:00:00",
   "dateModified" : "2020-02-15T00:00:00",
   "image" : "https:\/\/pgrandinetti.github.io\/research",
@@ -249,7 +249,7 @@
 
 <p>Word embeddings are one of the most important achievements in Natural Language Processing (NLP) of recent years. Unlike the tinier and tinier percentage improvement achieved on some famous task, that are usually the highlight of many papers, word embeddings are a <strong>conceptual achievement</strong>.</p>
 
-<p>Today, they are so well-known that every more word of mine about them would be quite useless. But just to set the pace: the words embeddings are <em>vectors of real numbers in a very high dimensional space (everywhere from 50 on), such that words that are &ldquo;related&rdquo; have similar embeddings</em>. For example, “dog” and “puppy” should have similar embeddings. So should “dog” and “cat”, at least in some dimension, as they both refer to pets. Even “Berlin” and “Rome” should be quite similar in some directions, as they are both capital cities.</p>
+<p>Today, they are so well-known that every more word of mine about them would be quite useless. But just to set the pace: the words embeddings are <em>vectors of real numbers in a very high dimensional space (everywhere from 50 on), such that words that are &ldquo;related&rdquo; have similar embeddings</em>. For example, &ldquo;dog&rdquo; and &ldquo;puppy&rdquo; should have similar embeddings. So should &ldquo;dog&rdquo; and &ldquo;cat&rdquo;, at least in some dimension, as they both refer to pets. Even &ldquo;Berlin&rdquo; and &ldquo;Rome&rdquo; should be quite similar in some directions, as they are both capital cities.</p>
 
 <p>When I first heard about (and studied) word embeddings my reaction was&ndash; this is both <em>genius and beautiful</em>.</p>
 
@@ -257,21 +257,21 @@
 
 <h2 id="where-do-embeddings-come-from">Where do Embeddings Come from?</h2>
 
-<p>I’ve noticed that most explanations and tutorials about word embeddings, some of which are really well done, take off by talking about Neural Networks, Deep Learning and so on.</p>
+<p>I&rsquo;ve noticed that most explanations and tutorials about word embeddings, some of which are really well done, take off by talking about Neural Networks, Deep Learning and so on.</p>
 
-<p>On the one hand, that’s just fine. For instance, <a href="https://arxiv.org/pdf/1301.3781.pdf">this tutorial</a> explains embeddings really well and presents them as the final state of an intermediate layer in a densely connected neural network. That works, and it’s a very little cute application of neural networks, powerful as usual (especially because they are universal approximators, as well known). Furthermore, that tutorial is very successful at explaining how training data are prepared for this application, which is very useful to know. All in all, I recommend reading it. It’s not by chance that is even recommended in Stanford’s class on NLP and Deep Learning.</p>
+<p>On the one hand, that&rsquo;s just fine. For instance, <a href="https://arxiv.org/pdf/1301.3781.pdf">this tutorial</a> explains embeddings really well and presents them as the final state of an intermediate layer in a densely connected neural network. That works, and it&rsquo;s a very little cute application of neural networks, powerful as usual (especially because they are universal approximators, as well known). Furthermore, that tutorial is very successful at explaining how training data are prepared for this application, which is very useful to know. All in all, I recommend reading it. It&rsquo;s not by chance that is even recommended in Stanford&rsquo;s class on NLP and Deep Learning.</p>
 
-<p>On the other hand, that’s not the whole story. It can’t be the case that everything is always about Deep Networks.</p>
+<p>On the other hand, that&rsquo;s not the whole story. It can&rsquo;t be the case that everything is always about Deep Networks.</p>
 
-<p>And in fact, the original word embeddings paper (the “word2vec paper”, as it is usually referred to), doesn’t deal with networks. It makes heavy use of optimization though (and don’t get me started on why Deep Networks are “just” an application of Optimization).</p>
+<p>And in fact, the original word embeddings paper (the &ldquo;word2vec paper&rdquo;, as it is usually referred to), doesn&rsquo;t deal with networks. It makes heavy use of optimization though (and don&rsquo;t get me started on why Deep Networks are &ldquo;just&rdquo; an application of Optimization).</p>
 
-<p>With Networks, we have a nice visualization. We get layers and units (once upon a time called neurons). We get arrows to describe forward pass and backpropagation. And we don’t care too much about gradient descent as long as tensorflow (or a similar software) takes care of it (which is a bad approach, in my opinion).</p>
+<p>With Networks, we have a nice visualization. We get layers and units (once upon a time called neurons). We get arrows to describe forward pass and backpropagation. And we don&rsquo;t care too much about gradient descent as long as tensorflow (or a similar software) takes care of it (which is a bad approach, in my opinion).</p>
 
-<p>Mathematical optimization gets us in the middle of our discomfort zone, as it’s a much more theoretical subject. That being said, I do believe it’s the forgotten key to open up any Deep Network secret. Not surprisingly, word embeddings come entirely from numerical optimization.</p>
+<p>Mathematical optimization gets us in the middle of our discomfort zone, as it&rsquo;s a much more theoretical subject. That being said, I do believe it&rsquo;s the forgotten key to open up any Deep Network secret. Not surprisingly, word embeddings come entirely from numerical optimization.</p>
 
 <h2 id="objectives">Objectives</h2>
 
-<p>This article’s primary goal is to clarify (to myself first) the details about how to get word embeddings using <strong>only numerical optimization</strong>. No machine learning techniques.</p>
+<p>This article&rsquo;s primary goal is to clarify (to myself first) the details about how to get word embeddings using <strong>only numerical optimization</strong>. No machine learning techniques.</p>
 
 <p>To do that, I will review the step-by-step optimization procedure that is introduced in the original word2vec paper. Understanding an optimization algorithm usually involves three steps, and this case is not an exception:</p>
 
@@ -287,55 +287,55 @@
 
 <h2 id="data-preparation">Data Preparation</h2>
 
-<p>The name “corpus” in NLP applications refers to a body of text, possibly made by multiple documents, each made of many paragraphs and sentences. Preparing a corpus for a word embeddings-based algorithm is a relatively simple procedure that has become quite standard in many applications. Let’s quickly review it.</p>
+<p>The name &ldquo;corpus&rdquo; in NLP applications refers to a body of text, possibly made by multiple documents, each made of many paragraphs and sentences. Preparing a corpus for a word embeddings-based algorithm is a relatively simple procedure that has become quite standard in many applications. Let&rsquo;s quickly review it.</p>
 
-<p>The whole strategy is based on a &ldquo;context-window approach&rdquo;. The text is analyzed word by word, or even token by token (where a token can be a word, a punctuation symbol or a few more things), and each time a token is selected, it assumes the role of “center token”. Every token around it gets the role of context token.</p>
+<p>The whole strategy is based on a &ldquo;context-window approach&rdquo;. The text is analyzed word by word, or even token by token (where a token can be a word, a punctuation symbol or a few more things), and each time a token is selected, it assumes the role of &ldquo;center token&rdquo;. Every token around it gets the role of context token.</p>
 
 <p>How many context tokens there can be around a center token? It depends on a parameter, usually called window-size. This is an algorithm parameter (a hyperparameter, if you will) and it obviously affects the end result.</p>
 
 <p>For each center word, and given the window size $w$, we can construct $w$ pairs of words. In each pair one element is the center word and the other is a context word.</p>
 
-<p>Let’s see an example. It’s given the following sentence: “The apple is on the table.” and a window size equal to 2.</p>
+<p>Let&rsquo;s see an example. It&rsquo;s given the following sentence: &ldquo;The apple is on the table.&rdquo; and a window size equal to 2.</p>
 
-<p>When the center word is “on”, we’ll get the following pairs: (apple, on), (is, on), (on, the), (on, table). Basically, we get 2 words on the left and two on the right of the center word and build pairs with them.</p>
+<p>When the center word is &ldquo;on&rdquo;, we&rsquo;ll get the following pairs: (apple, on), (is, on), (on, the), (on, table). Basically, we get 2 words on the left and two on the right of the center word and build pairs with them.</p>
 
-<p>Clearly, when the center word is at the beginning of the sentence we can’t take too many words on its left side. This happens for instance when the center word is “apple”. Viceversa, when it’s near the end of the sentence (for example “table”) we can’t take many words on its right side.</p>
+<p>Clearly, when the center word is at the beginning of the sentence we can&rsquo;t take too many words on its left side. This happens for instance when the center word is &ldquo;apple&rdquo;. Viceversa, when it&rsquo;s near the end of the sentence (for example &ldquo;table&rdquo;) we can&rsquo;t take many words on its right side.</p>
 
-<p>All pairs we get from this procedure will form the input to the optimization algorithm. Let’s talk about that one.</p>
+<p>All pairs we get from this procedure will form the input to the optimization algorithm. Let&rsquo;s talk about that one.</p>
 
 <h2 id="optimization-strategy">Optimization Strategy</h2>
 
-<p>So far we’ve got a bunch of pairs of words, and we know we want to get word embeddings using them.</p>
+<p>So far we&rsquo;ve got a bunch of pairs of words, and we know we want to get word embeddings using them.</p>
 
 <p>A good rule of thumb to design an optimization algorithm is to start with deciding about optimization variables and constraints. While doing this, keep in mind that the actual values of these variables change at each step of the optimization procedure, and that by the end of it we want to do something useful with those values!</p>
 
-<p>In this specific application, we want to have the embeddings ready by the end of the optimization. Thus, there’s little doubt that we need to represent the embeddings within the optimization variables. The question is <em>how</em>.</p>
+<p>In this specific application, we want to have the embeddings ready by the end of the optimization. Thus, there&rsquo;s little doubt that we need to represent the embeddings within the optimization variables. The question is <em>how</em>.</p>
 
-<p>A solution that makes the calculus simpler is to use two vectors for each word. One when that word is the center word, and the other when it’s a context word. Though this may seem odd initially, it does simplify the math a bit. The original word2vec paper contains more details about this trick, so I am going to refer you to it (see the references at the end).</p>
+<p>A solution that makes the calculus simpler is to use two vectors for each word. One when that word is the center word, and the other when it&rsquo;s a context word. Though this may seem odd initially, it does simplify the math a bit. The original word2vec paper contains more details about this trick, so I am going to refer you to it (see the references at the end).</p>
 
 <p>There are no constraints on these vectors, except that they have to contain real numbers.</p>
 
 <p>Remember: whatever optimization algorithm we use, for instance gradient descent, it will make some small changes to these vectors at each step of the procedure and by the end of it we should have meaningful (and useful) values in them.</p>
 
-<p>The other key point of optimization is the <em>cost function</em>. This function is what steers the variables towards “better” values.</p>
+<p>The other key point of optimization is the <em>cost function</em>. This function is what steers the variables towards &ldquo;better&rdquo; values.</p>
 
-<p>Consider an example: to optimize a gasoline car’s engine you may want to reduce emissions. Then you should design a cost function, computable via variables such as the rotational speed, friction, etc., that describes how the emissions relate to those variables. Then, to minimize that cost function effectively means to find values for those variables that reduce emissions.</p>
+<p>Consider an example: to optimize a gasoline car&rsquo;s engine you may want to reduce emissions. Then you should design a cost function, computable via variables such as the rotational speed, friction, etc., that describes how the emissions relate to those variables. Then, to minimize that cost function effectively means to find values for those variables that reduce emissions.</p>
 
-<p>Oftentimes the choice of the cost function is the real piece of creativity in the engineer’s work. And word embeddings is a very good example of it: in my opinion, it is where all the brilliance lies.</p>
+<p>Oftentimes the choice of the cost function is the real piece of creativity in the engineer&rsquo;s work. And word embeddings is a very good example of it: in my opinion, it is where all the brilliance lies.</p>
 
 <p>The starting point is that if two words appear very often in the same context window, then we want them to have similar embeddings. This is already a brilliant concept in itself, just that it has been repeated so many times that we have forgotten how clever it is.</p>
 
-<p>Now, how to represent the information “two vectors are similar”? Luckily, the basics of algebra tell us that the higher the dot product between two vectors, the more similar they are. There’s a problem though: dot-product can be negative, and this is not good for optimization.</p>
+<p>Now, how to represent the information &ldquo;two vectors are similar&rdquo;? Luckily, the basics of algebra tell us that the higher the dot product between two vectors, the more similar they are. There&rsquo;s a problem though: dot-product can be negative, and this is not good for optimization.</p>
 
-<p>Meet the exponential function: it makes every positive (and bigger). Thus, we can use the exponential of the dot-product between two variables. Let’s call it A.</p>
+<p>Meet the exponential function: it makes every positive (and bigger). Thus, we can use the exponential of the dot-product between two variables. Let&rsquo;s call it A.</p>
 
-<p>Things aren’t quite clear yet. Even if we compute that, how do we know that is “big”? How big is big? A billion, or more? There’s no space for subjectivity in optimization, we need a more absolute metric.</p>
+<p>Things aren&rsquo;t quite clear yet. Even if we compute that, how do we know that is &ldquo;big&rdquo;? How big is big? A billion, or more? There&rsquo;s no space for subjectivity in optimization, we need a more absolute metric.</p>
 
-<p>This is easily solvable. Let’s divide each A value by the same factor, and we would know how big are they with respect to the same factor. This is a common strategy indeed. But how to choose such a factor? There’s again a common solution to this problem: divide each term by the sum of all of them.</p>
+<p>This is easily solvable. Let&rsquo;s divide each A value by the same factor, and we would know how big are they with respect to the same factor. This is a common strategy indeed. But how to choose such a factor? There&rsquo;s again a common solution to this problem: divide each term by the sum of all of them.</p>
 
 <p>By doing this, we will know how big each A is with respect to the sum of all of them. Clever.</p>
 
-<p>Let’s now go on to some more details. Let’s say two optimization variables are $x_i$ and $x_j$. They both correspond to word embeddings, for two different words.</p>
+<p>Let&rsquo;s now go on to some more details. Let&rsquo;s say two optimization variables are $x_i$ and $x_j$. They both correspond to word embeddings, for two different words.</p>
 
 <p>When $x_j$ is the center word, the first term we need to compute is</p>
 
@@ -343,7 +343,7 @@
 \exp (x_i^T x_j)
 $$</p>
 
-<p>which is what I have called A so far. Then, let’s say we have a total of $V$ tokens, hence $V$ word embeddings and also $V$ optimization variables, each of a given dimensionality. The second term to compute is</p>
+<p>which is what I have called A so far. Then, let&rsquo;s say we have a total of $V$ tokens, hence $V$ word embeddings and also $V$ optimization variables, each of a given dimensionality. The second term to compute is</p>
 
 <p>$$
 \sum_{k\in V} \exp (x_k^T x_j)
@@ -351,13 +351,15 @@ $$</p>
 
 <p>and we need to divide them:</p>
 
-<p>$$ S(i,j) = \exp (x_i^T x<em>j) \sum</em>{k\in V} \exp (x_k^T x_j). $$</p>
+<p>$$
+S(i,j) = \exp(x_i^T x_j) / \sum_{k\in V} \exp(x_k^T x_j)
+$$</p>
 
 <p>This function expresses the similarity between the embeddings $x_i$ and $x_j$.</p>
 
 <p>The way the similarity function is built is typical of the <strong>softmax approach</strong>. Softmax is a numerical trick that given a set of real-values functions (such as exponential of dot-products) produces a probability distribution out of them. Such distribution has some nice numerical <a href="https://en.wikipedia.org/wiki/Softmax_function">properties</a>.</p>
 
-<p>At this point we need to think about the data we have and look at them anew in view of what said so far. We have a long list of tokens, grouped into pairs, and we want to find numerical vectors (embeddings) such that these vectors are similar for nearby words. We also have given a precise meaning to “similar”, with the similarity function.</p>
+<p>At this point we need to think about the data we have and look at them anew in view of what said so far. We have a long list of tokens, grouped into pairs, and we want to find numerical vectors (embeddings) such that these vectors are similar for nearby words. We also have given a precise meaning to &ldquo;similar&rdquo;, with the similarity function.</p>
 
 <p>But how to make sure that we get similar vectors for all pairs? Well, we have to loop through each pair and sum their similarities up, and then optimize the total value.</p>
 
@@ -369,44 +371,46 @@ $$</p>
 
 <p>where $(i,j)$ is a valid pair, according to the corpus and the window size.</p>
 
-<p>Why is there a product, instead of a sum? In short, it’s because similarity behaves like a probability distribution, and the chances of two independent events happening is the product of the two individual probabilities.</p>
+<p>Why is there a product, instead of a sum? In short, it&rsquo;s because similarity behaves like a probability distribution, and the chances of two independent events happening is the product of the two individual probabilities.</p>
 
-<p>Now that we’ve got a cost function that makes sense, there’s one last question to be asked: what do we want to do with it?</p>
+<p>Now that we&rsquo;ve got a cost function that makes sense, there&rsquo;s one last question to be asked: what do we want to do with it?</p>
 
 <p>Since the cost function is a product of similarities between words that appear nearby, and we want to have high similarities for such words, the objective is to <strong>maximize the cost function</strong>.</p>
 
-<p>From here, the rest are “just” numerical tricks.</p>
+<p>From here, the rest are &ldquo;just&rdquo; numerical tricks.</p>
 
 <ul>
 <li>First, multiply the cost function for a constant value, $1/V$. Multiplication by a constant term is known to not change the optimal value of the variables.</li>
-<li>Instead of maximizing the cost function directly, maximize it logarithmic value. This is only known to not change the optimal variables, and is a well-known trick used when there’s a product as the cost function.</li>
+<li>Instead of maximizing the cost function directly, maximize it logarithmic value. This is only known to not change the optimal variables, and is a well-known trick used when there&rsquo;s a product as the cost function.</li>
 <li>Transform the log of the product into a sum of logs, according to basics of exponential calculus.</li>
 <li>Instead of maximizing $F$, minimize $-F$. Yet another well known trick.</li>
 </ul>
 
 <p>After these simple manipulations, we get that optimization problem has become</p>
 
-<p>$$ \min_{x<em>k k\in V} \frac{-1}{T} \sum</em>{(i,j)} \log S(x_i,x_j). $$</p>
+<p>$$
+\min_{x_k, k\in V} \frac{-1}{T} \sum_{(i,j)} \log S(x_i,x_j).
+$$</p>
 
 <h2 id="discussion">Discussion</h2>
 
-<p>Before jumping into the description of my simple experiment, and looking into the code, there’s one remark worth making.</p>
+<p>Before jumping into the description of my simple experiment, and looking into the code, there&rsquo;s one remark worth making.</p>
 
-<p>The logical reasoning we’ve followed has led us to the following statement: <em>when we solve the optimization problem stated above, we will get the word embeddings with the maximum similarity for words that are in the same contexts</em>.</p>
+<p>The logical reasoning we&rsquo;ve followed has led us to the following statement: <em>when we solve the optimization problem stated above, we will get the word embeddings with the maximum similarity for words that are in the same contexts</em>.</p>
 
-<p>When you look at it from this point of view, it may sound like black magic. Especially when compared to those tutorial based on Neural Networks, it’s not clear how the correct embeddings are generated via pure optimization.</p>
+<p>When you look at it from this point of view, it may sound like black magic. Especially when compared to those tutorial based on Neural Networks, it&rsquo;s not clear how the correct embeddings are generated via pure optimization.</p>
 
-<p>Here’s how the algorithm works. First of all, initial values are (randomly) chosen for all variables. Then, the algorithm looks at the current value of the cost function with those values, compute the gradient with respect to them, and move them in the direction of the negative gradient, because that is the direction that leads to the minimum point of the cost function.</p>
+<p>Here&rsquo;s how the algorithm works. First of all, initial values are (randomly) chosen for all variables. Then, the algorithm looks at the current value of the cost function with those values, compute the gradient with respect to them, and move them in the direction of the negative gradient, because that is the direction that leads to the minimum point of the cost function.</p>
 
 <p>These steps are repeated iteratively, until a saddle point is reached.</p>
 
-<p>As you may know, I’ve basically described the principles of a (naive) implementation of the gradient descent.</p>
+<p>As you may know, I&rsquo;ve basically described the principles of a (naive) implementation of the gradient descent.</p>
 
 <h2 id="experiment">Experiment</h2>
 
 <p>For the sake of simplicity I have designed a very basic example that has enabled me to focus on the actual details of the embeddings optimization, instead of the complexity of the code. Links to GitHub and Colab are in the references at the end of this article.</p>
 
-<p>First of all, I created a dummy corpus that contains only 4 sentences. It’s important to understand that word embeddings become really useful only when they are optimized on <em>a lot</em> of data. Four sentences is definitely not a lot. Hence, the result may make little sense, numerically, but I argue that it’s good for educational purposes.</p>
+<p>First of all, I created a dummy corpus that contains only 4 sentences. It&rsquo;s important to understand that word embeddings become really useful only when they are optimized on <em>a lot</em> of data. Four sentences is definitely not a lot. Hence, the result may make little sense, numerically, but I argue that it&rsquo;s good for educational purposes.</p>
 
 <p>That being said, here are some of those four sentences.</p>
 <div class="highlight"><pre class="chroma">corpus = [
@@ -433,7 +437,7 @@ meat ---&gt; .
 . ---&gt; meat
 . ---&gt; &lt;end&gt;
 &lt;end&gt; ---&gt; .</pre></div>
-<p>Notice that the token “we” appears twice as the first word in a pair, because it has one token in its left context (<code>&lt;start&gt;</code>) and one in its right context (“do”). But it also appears twice as the second word: that is when it’s a context word.</p>
+<p>Notice that the token &ldquo;we&rdquo; appears twice as the first word in a pair, because it has one token in its left context (<code>&lt;start&gt;</code>) and one in its right context (&ldquo;do&rdquo;). But it also appears twice as the second word: that is when it&rsquo;s a context word.</p>
 
 <p>I then wrote some very simple code to initialize all embeddings with random values, by using <code>numpy</code>. For the sake of compact code, and also for the sake of clarity, I stacked all the embeddings in a matrix, naming it $\Theta$&ndash; common name for optimization variables.</p>
 
@@ -456,21 +460,21 @@ meat ---&gt; .
     # now get gradient thanks to GradientTape
     dTheta = gt.gradient(loss, theta)
     return loss, dTheta</pre></div>
-<p>Finally, I implemented a basic gradient descent loop. Gradient descent is an intuitive algorithm, but an efficient implementation would not be straightforward. Please bear with my simple code: as I said, it’s for illustrative purposes.</p>
+<p>Finally, I implemented a basic gradient descent loop. Gradient descent is an intuitive algorithm, but an efficient implementation would not be straightforward. Please bear with my simple code: as I said, it&rsquo;s for illustrative purposes.</p>
 
-<p>Here’s what happens to the cost function during the optimization procedure:</p>
+<p>Here&rsquo;s what happens to the cost function during the optimization procedure:</p>
 
 <p><img alt="Cumulated losses" src="../../../img/embeddings1-1/image7.png" width="400px" /></p>
 
-<p>Nicely decreasing. Couldn’t it decrease further? To answer, let’s zoom in to the final steps of the figure above.</p>
+<p>Nicely decreasing. Couldn&rsquo;t it decrease further? To answer, let&rsquo;s zoom in to the final steps of the figure above.</p>
 
 <p><img alt="Cumulated losses" src="../../../img/embeddings1-1/image6.png" width="400px" /></p>
 
-<p>When the cost function begins to oscillate, it’s the sign that we’ve got to stop the iterative procedure. It would be possible to go back, change some hyperparameter (like the learning rate) and run the optimization again.</p>
+<p>When the cost function begins to oscillate, it&rsquo;s the sign that we&rsquo;ve got to stop the iterative procedure. It would be possible to go back, change some hyperparameter (like the learning rate) and run the optimization again.</p>
 
 <p>Other than looking at the cost function, how can we get a sense of what the optimization did to the word embeddings?</p>
 
-<p>Here’s a possible point of view. Let’s select one word and assign the role of center word to it, say “do”. Then, let’s look at the dot product of this word’s embeddings with all the other token’s embeddings in the corpus, before optimization.</p>
+<p>Here&rsquo;s a possible point of view. Let&rsquo;s select one word and assign the role of center word to it, say &ldquo;do&rdquo;. Then, let&rsquo;s look at the dot product of this word&rsquo;s embeddings with all the other token&rsquo;s embeddings in the corpus, before optimization.</p>
 <div class="highlight"><pre class="chroma">Test word 0=&lt;start&gt; &gt;&gt; tf.Tensor(1.1288971789500877, shape=(), dtype=float64)
 Test word 1=they &gt;&gt; tf.Tensor(1.1071297588475966, shape=(), dtype=float64)
 Test word 2=do &gt;&gt; tf.Tensor(1.0956330843438067, shape=(), dtype=float64)
@@ -488,9 +492,9 @@ Test word 13=politics &gt;&gt; tf.Tensor(1.1075488268359415, shape=(), dtype=flo
 Test word 14=we &gt;&gt; tf.Tensor(1.0993974247747675, shape=(), dtype=float64)
 Test word 15=eat &gt;&gt; tf.Tensor(1.1008740289060956, shape=(), dtype=float64)
 Test word 16=meat &gt;&gt; tf.Tensor(1.1136024959532387, shape=(), dtype=float64)</pre></div>
-<p>As you can see, there’s little-no-difference in the products, no matter what context word is selected.</p>
+<p>As you can see, there&rsquo;s little-no-difference in the products, no matter what context word is selected.</p>
 
-<p>Now let’s look at the same values calculated <em>after</em> optimization.</p>
+<p>Now let&rsquo;s look at the same values calculated <em>after</em> optimization.</p>
 <div class="highlight"><pre class="chroma">Test word 0=&lt;start&gt; &gt;&gt; tf.Tensor(0.31829067616650725, shape=(), dtype=float64)
 Test word 1=they &gt;&gt; tf.Tensor(96.39118135113179, shape=(), dtype=float64)
 Test word 2=do &gt;&gt; tf.Tensor(0.07839746275724133, shape=(), dtype=float64)
@@ -508,17 +512,17 @@ Test word 13=politics &gt;&gt; tf.Tensor(0.49626054421077886, shape=(), dtype=fl
 Test word 14=we &gt;&gt; tf.Tensor(96.37172527931939, shape=(), dtype=float64)
 Test word 15=eat &gt;&gt; tf.Tensor(0.033494225834981795, shape=(), dtype=float64)
 Test word 16=meat &gt;&gt; tf.Tensor(0.3012141463330023, shape=(), dtype=float64)</pre></div>
-<p>Note how some context words get very high values: “they”, “not”, “she”, “we”, “you”. Why’s that?</p>
+<p>Note how some context words get very high values: &ldquo;they&rdquo;, &ldquo;not&rdquo;, &ldquo;she&rdquo;, &ldquo;we&rdquo;, &ldquo;you&rdquo;. Why&rsquo;s that?</p>
 
-<p>These are the words (tokens, if you prefer) that appear most often in the context of the center word “do”, given the window size 1. Therefore, gradient descent acts so to steer the embedding in order to have higher dot product between them.</p>
+<p>These are the words (tokens, if you prefer) that appear most often in the context of the center word &ldquo;do&rdquo;, given the window size 1. Therefore, gradient descent acts so to steer the embedding in order to have higher dot product between them.</p>
 
 <h2 id="conclusions-references-and-code">Conclusions, References and Code</h2>
 
-<p>In this article I spoke about word embeddings, a first-class citizen in Deep Learning and Natural Language Processing. I illustrated a too-often-forgotten way to compute word embeddings, that is based on pure optimization, and doesn’t require knowledge of Neural Networks.</p>
+<p>In this article I spoke about word embeddings, a first-class citizen in Deep Learning and Natural Language Processing. I illustrated a too-often-forgotten way to compute word embeddings, that is based on pure optimization, and doesn&rsquo;t require knowledge of Neural Networks.</p>
 
-<p>Worth knowing, this is how embeddings were presented in the seminal word2vec <a href="https://arxiv.org/pdf/1301.3781.pdf">paper</a>. I do recommend reading that paper, even though it may seem a bit difficult at first sight. If that’s the case, then I believe reading it after having read this article of mine should help. Even better, you can check out the class “NLP with Deep Learning” at Stanford, that is also available on <a href="https://www.youtube.com/playlist?list=PLoROMvodv4rOhcuXMZkNm7j3fVwBBY42z">youtube</a>.</p>
+<p>Worth knowing, this is how embeddings were presented in the seminal word2vec <a href="https://arxiv.org/pdf/1301.3781.pdf">paper</a>. I do recommend reading that paper, even though it may seem a bit difficult at first sight. If that&rsquo;s the case, then I believe reading it after having read this article of mine should help. Even better, you can check out the class &ldquo;NLP with Deep Learning&rdquo; at Stanford, that is also available on <a href="https://www.youtube.com/playlist?list=PLoROMvodv4rOhcuXMZkNm7j3fVwBBY42z">youtube</a>.</p>
 
-<p>If you really can’t leave without Deep Networks, then there are a bunch of good tutorials online that explain how it is possible to compute them using neural networks, like <a href="http://mccormickml.com/2016/04/19/word2vec-tutorial-the-skip-gram-model/">this one</a>. Though, frankly, and this may sound a bit too extreme, I’ve always seen deep networks as a fancy (and very successful) application of advanced optimization: compose a (real) lot of nonlinear functions each into the others and then try to fit a whole lot of parameters. Yeah, I know&hellip;</p>
+<p>If you really can&rsquo;t leave without Deep Networks, then there are a bunch of good tutorials online that explain how it is possible to compute them using neural networks, like <a href="http://mccormickml.com/2016/04/19/word2vec-tutorial-the-skip-gram-model/">this one</a>. Though, frankly, and this may sound a bit too extreme, I&rsquo;ve always seen deep networks as a fancy (and very successful) application of advanced optimization: compose a (real) lot of nonlinear functions each into the others and then try to fit a whole lot of parameters. Yeah, I know&hellip;</p>
 
 <p>Last, but definitely not least, feel free to check out my code, either on <a href="https://github.com/pgrandinetti/research/blob/master/Embeddings1_1.ipynb">GitHub</a> or in a <a href="https://colab.research.google.com/drive/1-ERPoJ3SP8HLwg6hMLhIjMCPFxHEk2CY">Colab</a>, and come back to me with questions or suggestions.</p>
 

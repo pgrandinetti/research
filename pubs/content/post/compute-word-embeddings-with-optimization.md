@@ -19,7 +19,7 @@ The idea of taking words from vocabulary and projecting them into a numerical sp
 
 I've noticed that most explanations and tutorials about word embeddings, some of which are really well done, take off by talking about Neural Networks, Deep Learning and so on.
 
-On the one hand, that's just fine. For instance, [this tutorial](https://arxiv.org/pdf/1301.3781.pdf) explains embeddings really well and presents them as the final state of an intermediate layer in a densely connected neural network. That works, and it's a very little cute application of neural networks, powerful as usual (especially because they are universal approximators, as well known). Furthermore, that tutorial is very successful at explaining how training data are prepared for this application, which is very useful to know. All in all, I recommend reading it. It's not by chance that is even recommended in Stanford's class on NLP and Deep Learning.
+On the one hand, that's just fine. For instance, [this tutorial](http://mccormickml.com/2016/04/19/word2vec-tutorial-the-skip-gram-model/) explains embeddings really well and presents them as the final state of an intermediate layer in a densely connected neural network. That works, and it's a very little cute application of neural networks, powerful as usual (especially because they are universal approximators, as well known). Furthermore, that tutorial is very successful at explaining how training data are prepared for this application, which is very useful to know. All in all, I recommend reading it. It's not by chance that is even recommended in Stanford's class on NLP and Deep Learning.
 
 On the other hand, that's not the whole story. It can't be the case that everything is always about Deep Networks.
 
